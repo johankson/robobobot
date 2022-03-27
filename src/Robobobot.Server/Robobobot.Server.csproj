@@ -18,4 +18,8 @@
       <ProjectReference Include="..\Robobobot.Core\Robobobot.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\Default\Index.cshtml" />
+    </ItemGroup>
+
 </Project>
