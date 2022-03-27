@@ -4,9 +4,9 @@ public class Battle
 {
     private readonly List<Player> players = new();
     private readonly IIdGenerator idGenerator = new IdGenerator();
-    
-    public BattleType Type { get; set; }
-    public string Id { get; set; }
+
+    public BattleType Type { get; set; } = BattleType.Regular;
+    public string BattleToken { get; set; } = string.Empty;
     
     public DateTime StartTime { get;  } = DateTime.Now;
 
@@ -33,7 +33,7 @@ public class Battle
 
 public class Player
 {
-    public string Token { get; set; }
+    public string Token { get; set; } = string.Empty;
     public string Name { get; set; } = "Player";
     public PlayerType Type { get; set; } = PlayerType.RemoteBot;
 }

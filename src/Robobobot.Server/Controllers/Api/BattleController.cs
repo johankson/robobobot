@@ -5,7 +5,7 @@ using Robobobot.Server.Services;
 namespace Robobobot.Server.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class BattleController : ControllerBase
 {
     private readonly BattleService battleService;
@@ -35,7 +35,7 @@ public class BattleController : ControllerBase
     public IActionResult JoinSandbox([FromBody] JoinSandboxRequest joinRequest)
     {
         var (battle, player)= battleService.CreateSandboxBattle(joinRequest.Name, joinRequest.NumberOfBots);
-        return new OkObjectResult(new JoinResponse(battle.Id, player.Token));
+        return new OkObjectResult(new JoinResponse(battle.BattleToken, player.Token));
     }
 
     [HttpGet]

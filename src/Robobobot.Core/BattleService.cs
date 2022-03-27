@@ -22,7 +22,7 @@ public class BattleService
 
         var battle = new Battle()
         {
-            Id = id,
+            BattleToken = id,
             Type = BattleType.Sandbox
         };
 
