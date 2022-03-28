@@ -1,4 +1,5 @@
 using System.Reflection;
+using Robobobot.Server.BackgroundServices;
 using Robobobot.Server.Services;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddSingleton(new BattleService());
+builder.Services.AddSingleton<TimedHostedService>();
+builder.Services.AddSingleton<IFpsController>(provider => provider.GetService<TimedHostedService>()!);
+builder.Services.AddHostedService<TimedHostedService>(provider => provider.GetService<TimedHostedService>()!);
 
 var app = builder.Build();
 

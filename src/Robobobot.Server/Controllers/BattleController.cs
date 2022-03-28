@@ -1,21 +1,20 @@
-using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
+using Robobobot.Server.BackgroundServices;
 using Robobobot.Server.Models;
 using Robobobot.Server.Services;
 namespace Robobobot.Server.Controllers;
-
-
 
 [ApiController]
 [Route("api/[controller]")]
 public class BattleController : ControllerBase
 {
     private readonly BattleService battleService;
-    
-    public BattleController(BattleService battleService)
+    private readonly IFpsController fpsController;
+
+    public BattleController(BattleService battleService, IFpsController fpsController)
     {
         this.battleService = battleService;
-
+        this.fpsController = fpsController;
     }
     
     [HttpPost]
