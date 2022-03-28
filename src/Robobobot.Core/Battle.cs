@@ -41,13 +41,7 @@ public class Battle
     public string RenderPlayerVisual(string playerToken)
     {
         var player = players.FirstOrDefault(e => e.Token == playerToken);
-        if (player is null)
-        {
-            return string.Empty;
-        }
-
-        // This should render only the visible field
-        return renderer.RenderVisualBattlefieldFromCoordinate(player.Location);
+        return player is null ? string.Empty : renderer.RenderVisualBattlefieldFromCoordinate(player.Location);
     }
 }
 public enum PlayerType
