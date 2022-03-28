@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Robobobot.Core;
 using Robobobot.Server.Services;
 using Xunit;
 namespace Robobobot.Tests;

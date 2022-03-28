@@ -1,9 +1,17 @@
+using System.Diagnostics.Metrics;
+using Robobobot.Core;
 namespace Robobobot.Server.Services;
 
 public class Battle
 {
     private readonly List<Player> players = new();
     private readonly IIdGenerator idGenerator = new IdGenerator();
+    private readonly BattleRenderer renderer;
+
+    public Battle()
+    {
+        renderer = new BattleRenderer(this);
+    }
 
     public BattleType Type { get; set; } = BattleType.Regular;
     public string BattleToken { get; set; } = string.Empty;
@@ -29,15 +37,19 @@ public class Battle
         players.Add(player);
         return player;
     }
-}
 
-public class Player
-{
-    public string Token { get; set; } = string.Empty;
-    public string Name { get; set; } = "Player";
-    public PlayerType Type { get; set; } = PlayerType.RemoteBot;
-}
+    public string RenderPlayerVisual(string playerToken)
+    {
+        var player = players.FirstOrDefault(e => e.Token == playerToken);
+        if (player is null)
+        {
+            return string.Empty;
+        }
 
+        // This should render only the visible field
+        return renderer.RenderVisualBattlefieldFromCoordinate(player.Location);
+    }
+}
 public enum PlayerType
 {
     ServerBot,

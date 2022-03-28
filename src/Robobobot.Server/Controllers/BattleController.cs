@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Robobobot.Core;
 using Robobobot.Server.BackgroundServices;
 using Robobobot.Server.Models;
 using Robobobot.Server.Services;
@@ -54,4 +56,56 @@ public class BattleController : ControllerBase
     
         return new OkObjectResult(renderer.RenderAsText());
     }
+
+    /// <summary>
+    /// Gets the playing fields visual representation seen from your tank.
+    /// </summary>
+    /// <param name="playerHeaders">The headers.</param>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("get-visual")]
+    public async Task<IActionResult> GetVisual([FromQuery] PlayerHeaders playerHeaders)
+    {
+        try
+        {
+            if (!battleService.RequestActionLock(playerHeaders.Token))
+            {
+                return new BadRequestObjectResult("You already have a pending action");
+            }
+
+            // The build in delay
+            var battle = battleService.GetBattleByPlayerToken(playerHeaders.Token);
+            if (battle is null)
+            {
+                return new BadRequestObjectResult("Could not find a battle for the given token...");
+            }
+            
+            // This should be fetched by config for that specific command and settings
+            await Task.Delay(3000);
+        
+            // Concept code
+            return new OkObjectResult(new GetVisualResponse(battle.RenderPlayerVisual(playerHeaders.Token)));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        finally
+        {
+            battleService.ReleaseActionLock(playerHeaders.Token);
+        }
+    }
+}
+
+public record GetVisualResponse(string Battlefield);
+
+public record PlayerHeaders
+{
+    /// <summary>
+    /// The player token for a given battle and player. This is a required header.
+    /// </summary>
+    [FromHeader]
+    [Required]
+    public string Token { get; set; } = string.Empty;
 }

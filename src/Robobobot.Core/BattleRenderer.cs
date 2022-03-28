@@ -1,4 +1,5 @@
 using System.Text;
+using Robobobot.Core;
 namespace Robobobot.Server.Services;
 
 public class BattleRenderer
@@ -28,6 +29,14 @@ public class BattleRenderer
         sb.AppendLine("");
         sb.AppendLine("The battlefield:");
 
+        RenderBattleField();
+
+        return sb.ToString();
+    }
+
+    public string RenderBattleField()
+    {
+        var sb = new StringBuilder();
         for (var row = 0; row < battle.FieldWidth; row++)
         {
             for (var col = 0; col < battle.FieldHeight; col++)
@@ -36,7 +45,12 @@ public class BattleRenderer
             }
             sb.AppendLine("");
         }
-
         return sb.ToString();
+    }
+
+    public string RenderVisualBattlefieldFromCoordinate(Location location)
+    {
+        // todo - create fog of war
+        return RenderBattleField();
     }
 }
