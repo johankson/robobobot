@@ -76,6 +76,14 @@ public class Cell
         CellType.Swamp => 'S',
         _ => throw new ArgumentOutOfRangeException()
     };
+    public bool IsSeeThrough()=> Type switch
+    {
+        CellType.Land => true,
+        CellType.Forrest => false,
+        CellType.Mountain => false,
+        CellType.Swamp => true,
+        _ => throw new ArgumentOutOfRangeException()
+    };
 }
 
 public enum CellType

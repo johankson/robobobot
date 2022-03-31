@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text;
 
 namespace Robobobot.Core;
@@ -50,9 +51,60 @@ public class BattleRenderer
 
     public string RenderVisualBattlefieldPlayer(Player player)
     {
+        var sb = new StringBuilder();
+        for (var row = 0; row < battle.BattleField.Width; row++)
+        {
+            for (var col = 0; col < battle.BattleField.Height; col++)
+            {
+                if (col == player.Location.X && row == player.Location.Y)
+                    sb.Append('X');
+                else
+                {
+                    var c = IsCellVisibleForPlayer(player, col, row) ? battle.BattleField.GetCell(col, row).GetCharType() : ' ';
+                    sb.Append(c);
+                }
+            }
+            sb.AppendLine("");
+        }
+        return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+    }
+    private bool IsCellVisibleForPlayer(Player player, int x, int y)
+    {
+        // Naive first implementation
+        var v1 = new Vector2(player.Location.X + 0.5f, player.Location.Y + 0.5f);
+        var tx = x < player.Location.X ? 1f : 0f;
+        var ty = y < player.Location.Y ? 1f : 0f;
+
+        if (x == player.Location.X) tx = 0.5f;
+        if (y == player.Location.Y) ty = 0.5f;
         
-        
-        
-        return RenderBattleField();
+        var v2 = new Vector2(x + tx, y + ty);
+        var diff = (v2 - v1);
+        var stepDirection = Vector2.Normalize(diff) / 2f;
+
+        var steps = diff.Length() * 2f;
+        var cursor = v1;
+
+        for (var step = 0; step < steps; step++)
+        {
+            cursor += stepDirection;
+
+            var dx = (int)(cursor.X);
+            var dy = (int)(cursor.Y);
+
+            if (!battle.BattleField.GetCell(dx, dy).IsSeeThrough())
+            {
+                if (dx == x && dy == y)
+                {
+                    // It's the last cell, so we do see this one
+                    return true;
+                }
+                
+                return false;
+            }
+        }
+
+        return true;
+
     }
 }
