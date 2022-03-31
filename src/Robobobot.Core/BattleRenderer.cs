@@ -41,7 +41,7 @@ public class BattleRenderer
         {
             for (var col = 0; col < battle.BattleField.Height; col++)
             {
-                sb.Append('.'); // Logic here to view something
+                sb.Append(battle.BattleField.GetCell(col, row).GetCharType()); // Logic here to view something
             }
             sb.AppendLine("");
         }
@@ -50,7 +50,9 @@ public class BattleRenderer
 
     public string RenderVisualBattlefieldPlayer(Player player)
     {
-        // todo - create fog of war
+        
+        
+        
         return RenderBattleField();
     }
 }

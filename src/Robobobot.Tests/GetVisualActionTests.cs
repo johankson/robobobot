@@ -19,6 +19,7 @@ public class GetVisualActionTests
         
         var service = new BattleService();
         var (battle, player) = service.CreateSandboxBattle("test", battleField: level);
+        player.Location = new Location(10, 10);
 
         // Act
         var action = new GetVisualAction(player);
