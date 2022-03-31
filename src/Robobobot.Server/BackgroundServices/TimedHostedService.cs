@@ -1,17 +1,20 @@
+using Robobobot.Core;
 namespace Robobobot.Server.BackgroundServices;
 
 public class TimedHostedService : IHostedService, IDisposable, IFpsController
 {
     private int frameNumber;
     private readonly ILogger<TimedHostedService> logger;
+    private readonly BattleService battleService;
     private Timer timer = null!;
     private int fps;
     
     public FpsControllerState State { get; private set; }
 
-    public TimedHostedService(ILogger<TimedHostedService> logger)
+    public TimedHostedService(ILogger<TimedHostedService> logger, BattleService battleService)
     {
         this.logger = logger;
+        this.battleService = battleService;
     }
 
     public Task StartAsync(CancellationToken stoppingToken)
@@ -52,6 +55,8 @@ public class TimedHostedService : IHostedService, IDisposable, IFpsController
         {
             var count = Interlocked.Increment(ref frameNumber);
             logger.LogInformation("Executing frame #{Count}", count);
+            
+            battleService.Update();
         }
         finally {
         {

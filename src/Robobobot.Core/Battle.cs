@@ -1,6 +1,7 @@
-using System.Diagnostics.Metrics;
-using Robobobot.Core;
-namespace Robobobot.Server.Services;
+using Robobobot.Core.Actions;
+using Robobobot.Server.BackgroundServices;
+using Robobobot.Server.Services;
+namespace Robobobot.Core;
 
 public class Battle
 {
@@ -12,6 +13,8 @@ public class Battle
     {
         renderer = new BattleRenderer(this);
     }
+
+    public BattleRenderer Renderer => renderer;
 
     public BattleType Type { get; set; } = BattleType.Regular;
     public string BattleToken { get; set; } = string.Empty;
@@ -38,14 +41,47 @@ public class Battle
         return player;
     }
 
-    public string RenderPlayerVisual(string playerToken)
+    public async Task<T> EnqueueAndWait<T>(T action) where T : ActionBase
     {
-        var player = players.FirstOrDefault(e => e.Token == playerToken);
-        return player is null ? string.Empty : renderer.RenderVisualBattlefieldFromCoordinate(player.Location);
+        lock (nextFrameActions)
+        {
+            nextFrameActions.Add(action);
+        }
+
+        using var sph = new SemaphoreSlim(0, 1);
+        
+        action.OnComplete(() =>
+        {
+            // ReSharper disable once AccessToDisposedClosure
+            sph?.Release();
+        });
+
+        var t = sph.WaitAsync();
+            
+        if (await Task.WhenAny(t, Task.Delay(10000)) == t)
+        {
+            return action;
+        }
+
+        throw new TimeoutException();
     }
-}
-public enum PlayerType
-{
-    ServerBot,
-    RemoteBot
+
+    private readonly List<ActionBase> nextFrameActions = new();
+    
+    public async Task Update()
+    {
+        var frameActions = new List<ActionBase>();
+        lock (nextFrameActions)
+        {
+            frameActions.InsertRange(0, nextFrameActions);
+            nextFrameActions.Clear();
+        }
+
+        foreach (var action in frameActions)
+        {
+            var result = await action.Execute();
+            action.Result = result;
+            action.CompleteCallback?.Invoke();
+        }
+    }
 }

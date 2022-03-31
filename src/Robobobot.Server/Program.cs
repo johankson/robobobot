@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-builder.Services.AddSingleton(new BattleService());
+builder.Services.AddSingleton<BattleService>();
 builder.Services.AddSingleton<TimedHostedService>();
 builder.Services.AddSingleton<IFpsController>(provider => provider.GetService<TimedHostedService>()!);
 builder.Services.AddHostedService<TimedHostedService>(provider => provider.GetService<TimedHostedService>()!);

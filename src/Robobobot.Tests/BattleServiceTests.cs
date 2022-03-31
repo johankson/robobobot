@@ -1,7 +1,9 @@
 using FluentAssertions;
+using NSubstitute;
 using Robobobot.Core;
-using Robobobot.Server.Services;
+using Robobobot.Server.BackgroundServices;
 using Xunit;
+
 namespace Robobobot.Tests;
 
 public class BattleServiceTests

@@ -1,19 +1,26 @@
+using Robobobot.Core.Actions;
+using Robobobot.Server.BackgroundServices;
 using Robobobot.Server.Services;
 namespace Robobobot.Core;
 
 public class BattleService
 {
+  //  private readonly IFpsController fpsController;
     private readonly IIdGenerator idGenerator;
     private readonly Dictionary<string, Battle> activeBattles = new();
 
     public BattleService()
     {
+        //this.fpsController = fpsController;
         this.idGenerator = new IdGenerator();
     }
 
-    public BattleService(IIdGenerator idGenerator)
+    public async Task Update()
     {
-        this.idGenerator = idGenerator;
+        foreach (var battle in activeBattles)
+        {
+            await battle.Value.Update();
+        }
     }
     
     public (Battle, Player) CreateSandboxBattle(string playerName, int numberOfBots)
@@ -40,6 +47,15 @@ public class BattleService
     
     public Battle? Get(string battleId) => !activeBattles.ContainsKey(battleId) ? null : activeBattles[battleId];
 
+    /// <summary>
+    /// Requests a lock to execute an action.
+    /// </summary>
+    /// <param name="playerToken">The player token.</param>
+    /// <returns>true if a lock could be acquired, otherwise false.</returns>
+    /// <remarks>
+    /// Everytime a player needs to execute an action, a lock needs to be acquired to
+    /// block the player from running more than one action at the time.
+    /// </remarks>
     public bool RequestActionLock(string playerToken)
     {
         var player = GetPlayerByToken(playerToken);
@@ -52,7 +68,7 @@ public class BattleService
         player?.ReleaseActionLock();
     }
     
-    private Player? GetPlayerByToken(string playerToken)
+    public Player? GetPlayerByToken(string playerToken)
     {
         // Concept to get the player with a given token.
         // A cache might be better here.
@@ -70,12 +86,5 @@ public class BattleService
             .Where(player => player.Token == playerToken), (b, _) => b.Value).FirstOrDefault();
 
         return battle;
-    }
-
-    // Refactor this into some command based plug in thingy
-    private string GetPlayerVisual(string playerToken)
-    {
-        var battle = GetBattleByPlayerToken(playerToken);
-        return battle?.RenderPlayerVisual(playerToken) ?? string.Empty;
     }
 }

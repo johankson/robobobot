@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Robobobot.Core;
+using Robobobot.Core.Actions;
 using Robobobot.Server.BackgroundServices;
 using Robobobot.Server.Models;
 using Robobobot.Server.Services;
@@ -12,11 +13,13 @@ public class BattleController : ControllerBase
 {
     private readonly BattleService battleService;
     private readonly IFpsController fpsController;
+    private readonly ILogger<BattleController> logger;
 
-    public BattleController(BattleService battleService, IFpsController fpsController)
+    public BattleController(BattleService battleService, IFpsController fpsController, ILogger<BattleController> logger)
     {
         this.battleService = battleService;
         this.fpsController = fpsController;
+        this.logger = logger;
     }
     
     [HttpPost]
@@ -66,6 +69,9 @@ public class BattleController : ControllerBase
     [Route("get-visual")]
     public async Task<IActionResult> GetVisual([FromQuery] PlayerHeaders playerHeaders)
     {
+        if(fpsController.State == FpsControllerState.Paused)
+            fpsController.Resume();
+        
         try
         {
             if (!battleService.RequestActionLock(playerHeaders.Token))
@@ -73,18 +79,25 @@ public class BattleController : ControllerBase
                 return new BadRequestObjectResult("You already have a pending action");
             }
 
-            // The build in delay
+            // The get the battle and player
             var battle = battleService.GetBattleByPlayerToken(playerHeaders.Token);
-            if (battle is null)
-            {
-                return new BadRequestObjectResult("Could not find a battle for the given token...");
-            }
+            if (battle is null) return new BadRequestObjectResult("Could not find a battle for the given token...");
+
+            var player = battleService.GetPlayerByToken(playerHeaders.Token);
+            if(player is null)  return new BadRequestObjectResult("Could not find a player for the given token...");
             
-            // This should be fetched by config for that specific command and settings
-            await Task.Delay(3000);
-        
-            // Concept code
-            return new OkObjectResult(new GetVisualResponse(battle.RenderPlayerVisual(playerHeaders.Token)));
+            logger.LogInformation("Enqueueing GetVisual Action");
+            var action = await battle.EnqueueAndWait(new GetVisualAction(player, battle.Renderer));
+            if (action.Result != null)
+            {
+                logger.LogInformation("Completed GetVisual Action, waiting the specified time");
+                await Task.Delay(action.Result.ExecutionDuration);
+
+                logger.LogInformation("Returning result to client");
+                return new OkObjectResult(action.Result);
+            }
+
+            return new BadRequestResult();
         }
         catch (Exception e)
         {

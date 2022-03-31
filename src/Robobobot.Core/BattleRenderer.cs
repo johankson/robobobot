@@ -29,7 +29,7 @@ public class BattleRenderer
         sb.AppendLine("");
         sb.AppendLine("The battlefield:");
 
-        RenderBattleField();
+        sb.AppendLine(RenderBattleField());
 
         return sb.ToString();
     }
@@ -41,14 +41,14 @@ public class BattleRenderer
         {
             for (var col = 0; col < battle.FieldHeight; col++)
             {
-                sb.Append(".");
+                sb.Append("."); // Logic here to view something
             }
             sb.AppendLine("");
         }
         return sb.ToString();
     }
 
-    public string RenderVisualBattlefieldFromCoordinate(Location location)
+    public string RenderVisualBattlefieldPlayer(Player player)
     {
         // todo - create fog of war
         return RenderBattleField();
