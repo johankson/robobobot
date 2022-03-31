@@ -6,6 +6,10 @@ Robobot is a multiplayer battle game where you control your tank via API calls. 
 
 The server is written in .net 6. There is a dockerfile present if you want to run it in docker.
 
+## Contribute?
+
+Check out the [contribute](docs/Contribute.md) page...
+
 ## What's done vs planned?
 
 The rough plan.

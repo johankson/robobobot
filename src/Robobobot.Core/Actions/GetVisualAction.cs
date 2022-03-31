@@ -5,17 +5,15 @@ namespace Robobobot.Core.Actions;
 public class GetVisualAction : ActionBase
 {
     private readonly Player player;
-    private readonly BattleRenderer renderer;
 
-    public GetVisualAction(Player player, BattleRenderer renderer)
+    public GetVisualAction(Player player)
     {
         this.player = player;
-        this.renderer = renderer;
     }
     
-    public override Task<ActionExecutionResult> Execute()
+    public override Task<ActionExecutionResult> Execute(Battle battle)
     {
-        var battleField = renderer.RenderVisualBattlefieldPlayer(player);
+        var battleField = battle.Renderer.RenderVisualBattlefieldPlayer(player);
         
         var result = new GetVisualExecutionResult()
         {

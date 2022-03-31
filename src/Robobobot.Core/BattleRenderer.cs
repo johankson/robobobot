@@ -1,6 +1,6 @@
 using System.Text;
-using Robobobot.Core;
-namespace Robobobot.Server.Services;
+
+namespace Robobobot.Core;
 
 public class BattleRenderer
 {
@@ -37,15 +37,15 @@ public class BattleRenderer
     public string RenderBattleField()
     {
         var sb = new StringBuilder();
-        for (var row = 0; row < battle.FieldWidth; row++)
+        for (var row = 0; row < battle.BattleField.Width; row++)
         {
-            for (var col = 0; col < battle.FieldHeight; col++)
+            for (var col = 0; col < battle.BattleField.Height; col++)
             {
-                sb.Append("."); // Logic here to view something
+                sb.Append('.'); // Logic here to view something
             }
             sb.AppendLine("");
         }
-        return sb.ToString();
+        return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
     }
 
     public string RenderVisualBattlefieldPlayer(Player player)

@@ -87,15 +87,17 @@ public class BattleController : ControllerBase
             if(player is null)  return new BadRequestObjectResult("Could not find a player for the given token...");
             
             logger.LogInformation("Enqueueing GetVisual Action");
-            var action = await battle.EnqueueAndWait(new GetVisualAction(player, battle.Renderer));
-            if (action.Result != null)
+            var action = await battle.EnqueueAndWait(new GetVisualAction(player));
+            if (action.Result == null)
             {
-                logger.LogInformation("Completed GetVisual Action, waiting the specified time");
-                await Task.Delay(action.Result.ExecutionDuration);
-
-                logger.LogInformation("Returning result to client");
-                return new OkObjectResult(action.Result);
+                return new BadRequestResult();
             }
+            
+            logger.LogInformation("Completed GetVisual Action, waiting the specified time");
+            await Task.Delay(action.Result.ExecutionDuration);
+
+            logger.LogInformation("Returning result to client");
+            return new OkObjectResult(action.Result);
 
             return new BadRequestResult();
         }

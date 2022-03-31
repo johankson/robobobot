@@ -23,7 +23,7 @@ public class BattleService
         }
     }
     
-    public (Battle, Player) CreateSandboxBattle(string playerName, int numberOfBots)
+    public (Battle, Player) CreateSandboxBattle(string playerName, int numberOfBots = 3, string battleField = "")
     {
         var id = idGenerator.Generate();
 
@@ -32,6 +32,11 @@ public class BattleService
             BattleToken = id,
             Type = BattleType.Sandbox
         };
+
+        if (!string.IsNullOrWhiteSpace(battleField))
+        {
+            battle.UsePredefinedBattleField(battleField);
+        }
 
         var player = battle.AddPlayer(PlayerType.RemoteBot, playerName);
 
