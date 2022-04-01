@@ -8,6 +8,7 @@ using Robobobot.Server.BackgroundServices;
 namespace Robobobot.Server.Controllers;
 
 [ApiController]
+[Produces("application/json")]
 [Route("api/[controller]")]
 public class BattleController : ControllerBase
 {
@@ -35,15 +36,15 @@ public class BattleController : ControllerBase
     /// <param name="joinRequest">The request for creating a sandbox battle.</param>
     /// <returns>A JoinResponse with a battle Id and a Player Token.</returns>
     /// <remarks>The token to use is the player token. The Battle Id is representing the entire battle.</remarks>
-    [HttpPost]
+    [HttpPost()]
     [Route("join-sandbox")]
     [ProducesResponseType(typeof(JoinResponse), StatusCodes.Status200OK)]
     public IActionResult JoinSandbox([FromBody] JoinSandboxRequest joinRequest)
     {
-        var (battle, player)= battleService.CreateSandboxBattle(joinRequest.Name, joinRequest.NumberOfBots);
+        var (battle, player)= battleService.CreateSandboxBattle(joinRequest.Name, joinRequest.NumberOfBots, joinRequest.BattleFieldOptions);
         return new OkObjectResult(new JoinResponse(battle.BattleToken, player.Token));
     }
-
+    
     [HttpGet]
     [Route("view-battle-raw")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]

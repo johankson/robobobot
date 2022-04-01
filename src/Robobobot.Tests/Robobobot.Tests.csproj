@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Robobobot.Core.Models\Robobobot.Core.Models.csproj" />
       <ProjectReference Include="..\Robobobot.Core\Robobobot.Core.csproj" />
     </ItemGroup>
 

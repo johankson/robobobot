@@ -10,7 +10,7 @@ public class CreateSandboxGameTests
     public async Task ShouldCreateSandboxGame()
     {
         // Arrange
-        var client = new RobobobotClient("https://localhost:7297");
+        var client = new RobobobotClient(TestConstants.ResolveRemoteAddress());
 
         // Act
         var (battleId, playerToken) = await client.CreateSandboxGame("Tester", 3);

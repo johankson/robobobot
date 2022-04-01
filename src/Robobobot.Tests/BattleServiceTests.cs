@@ -1,6 +1,9 @@
+using System.IO;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Robobobot.Core;
+using Robobobot.Core.Models;
 using Robobobot.Server.BackgroundServices;
 using Xunit;
 
@@ -22,9 +25,25 @@ public class BattleServiceTests
         var service = new BattleService();
         
         // Act
-        var battleToken = service.CreateSandboxBattle("Bengt", 2);
+        var (battle, _) = service.CreateSandboxBattle("Bengt", 2);
         
         // Assert
-        battleToken.Should().NotBeNull();
+        battle.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task ShouldCreateSandboxBattleWithPredefinedLevel()
+    {
+        // Arrange
+        const string levelPath = "Actions/GetVisual/1_Level.txt";
+        var level = await File.ReadAllTextAsync(Path.Combine("Fixtures", levelPath));
+        var service = new BattleService();
+        var options = new BattleFieldOptions(Predefined: level);
+        
+        // Act
+        var (battle, _) = service.CreateSandboxBattle("Bengt", 2, options);
+        
+        // Assert
+        battle.Renderer.RenderBattleField().Should().BeEquivalentTo(level);
     }
 }

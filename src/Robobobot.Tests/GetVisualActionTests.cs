@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Robobobot.Core;
 using Robobobot.Core.Actions;
+using Robobobot.Core.Models;
 using Xunit;
 
 namespace Robobobot.Tests;
@@ -18,7 +19,8 @@ public class GetVisualActionTests
         var rendered = await File.ReadAllTextAsync(Path.Combine("Fixtures", renderedPath));
         
         var service = new BattleService();
-        var (battle, player) = service.CreateSandboxBattle("test", battleField: level);
+        var options = new BattleFieldOptions(Predefined: level);
+        var (battle, player) = service.CreateSandboxBattle("test", options: options);
         player.Location = new Location(10, 10);
 
         // Act

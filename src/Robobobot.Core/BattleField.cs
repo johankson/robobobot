@@ -59,6 +59,7 @@ public class BattleField
     };
 
     public Cell GetCell(int x, int y) => cells[x, y];
+    public Cell GetCell(Location location) => cells[location.X, location.Y];
 }
 
 public class Cell
@@ -76,6 +77,7 @@ public class Cell
         CellType.Swamp => 'S',
         _ => throw new ArgumentOutOfRangeException()
     };
+    
     public bool IsSeeThrough()=> Type switch
     {
         CellType.Land => true,
@@ -84,6 +86,8 @@ public class Cell
         CellType.Swamp => true,
         _ => throw new ArgumentOutOfRangeException()
     };
+    
+    public bool IsMovableTo() => Type is CellType.Forrest or CellType.Land;
 }
 
 public enum CellType

@@ -10,4 +10,8 @@
       <PackageReference Include="shortid" Version="3.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Robobobot.Core.Models\Robobobot.Core.Models.csproj" />
+    </ItemGroup>
+
 </Project>

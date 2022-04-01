@@ -1,4 +1,5 @@
 using Robobobot.Core.Actions;
+using Robobobot.Core.Models;
 using Robobobot.Server.BackgroundServices;
 using Robobobot.Server.Services;
 namespace Robobobot.Core;
@@ -23,7 +24,7 @@ public class BattleService
         }
     }
     
-    public (Battle, Player) CreateSandboxBattle(string playerName, int numberOfBots = 3, string battleField = "")
+    public (Battle, Player) CreateSandboxBattle(string playerName, int numberOfBots = 3, BattleFieldOptions? options = null)
     {
         var id = idGenerator.Generate();
 
@@ -33,9 +34,9 @@ public class BattleService
             Type = BattleType.Sandbox
         };
 
-        if (!string.IsNullOrWhiteSpace(battleField))
+        if (!string.IsNullOrWhiteSpace(options?.Predefined))
         {
-            battle.UsePredefinedBattleField(battleField);
+            battle.UsePredefinedBattleField(options.Predefined);
         }
 
         var player = battle.AddPlayer(PlayerType.RemoteBot, playerName);
