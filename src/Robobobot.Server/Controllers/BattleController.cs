@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Robobobot.Core;
 using Robobobot.Core.Actions;
+using Robobobot.Core.Models;
 using Robobobot.Server.BackgroundServices;
-using Robobobot.Server.Models;
-using Robobobot.Server.Services;
+
 namespace Robobobot.Server.Controllers;
 
 [ApiController]
@@ -37,7 +37,7 @@ public class BattleController : ControllerBase
     /// <remarks>The token to use is the player token. The Battle Id is representing the entire battle.</remarks>
     [HttpPost]
     [Route("join-sandbox")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JoinResponse), StatusCodes.Status200OK)]
     public IActionResult JoinSandbox([FromBody] JoinSandboxRequest joinRequest)
     {
         var (battle, player)= battleService.CreateSandboxBattle(joinRequest.Name, joinRequest.NumberOfBots);
@@ -45,8 +45,9 @@ public class BattleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("view-battle")]
-    public IActionResult ViewBattle(string battleId)
+    [Route("view-battle-raw")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    public IActionResult ViewBattleRaw(string battleId)
     {
         // this should be protected by a viewer ID so clients don't use this info
         var battle = battleService.Get(battleId);
