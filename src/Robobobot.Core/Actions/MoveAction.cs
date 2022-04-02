@@ -1,3 +1,4 @@
+using Robobobot.Core.Extensions;
 namespace Robobobot.Core.Actions;
 
 public class MoveAction : ActionBase
@@ -21,7 +22,7 @@ public class MoveAction : ActionBase
             player.Location = targetLocation;
             var successResult = new MoveExecutionResult()
             {
-                ExecutionDuration = 4000,
+                ExecutionDuration = targetCell.ResolveDuration(battle),
                 FinalLocation = targetLocation,
                 Success = true
             };
@@ -31,7 +32,7 @@ public class MoveAction : ActionBase
         
         var failureResult = new MoveExecutionResult()
         {
-            ExecutionDuration = 4000,
+            ExecutionDuration = battle.Settings.MovementDurations.FailureToMoveInMilliseconds,
             FinalLocation = player.Location,
             Success = false
         };

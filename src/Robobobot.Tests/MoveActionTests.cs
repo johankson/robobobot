@@ -35,6 +35,7 @@ public class MoveActionTests
         result.Should().NotBeNull();
         result!.FinalLocation?.Y.Should().Be(9);
         result.Success.Should().BeTrue();
+        result.ExecutionDuration.Should().Be(BattleSettings.Default.MovementDurations.MoveOverLandInMilliseconds);
     }
     
     [Fact]
@@ -57,5 +58,29 @@ public class MoveActionTests
         result.Should().NotBeNull();
         result!.FinalLocation?.Y.Should().Be(9);
         result.Success.Should().BeFalse();
+        result.ExecutionDuration.Should().Be(BattleSettings.Default.MovementDurations.FailureToMoveInMilliseconds);
+    }
+    
+    [Fact]
+    public async Task ShouldMoveSlowerThroughForrest()
+    {
+        // Arrange
+        var (battle, player, _) = await TestUtils.CreateSandboxWithPredefinedLevel();
+        player.Location = new Location(4, 17); // Just below the forrest
+        var moveAction = new MoveAction(player, MoveDirection.North);
+        log.WriteLine("Pre move map:");
+        log.WriteLine(battle.Renderer.RenderBattleField(true, true));
+
+        // Act
+        var result = (await moveAction.Execute(battle)) as MoveExecutionResult; 
+        log.WriteLine("Post move map:");
+        log.WriteLine(battle.Renderer.RenderBattleField(true, true));
+
+        // Assert
+        player.Location.Y.Should().Be(16);
+        result.Should().NotBeNull();
+        result!.FinalLocation?.Y.Should().Be(16);
+        result.Success.Should().BeTrue();
+        result.ExecutionDuration.Should().Be(BattleSettings.Default.MovementDurations.MoveThroughForrestInMilliseconds);
     }
 }

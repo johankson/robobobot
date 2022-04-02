@@ -32,6 +32,8 @@ public class Battle
 
     public BattleType Type { get; set; } = BattleType.Regular;
     public string BattleToken { get; set; } = string.Empty;
+
+    public BattleSettings Settings { get; set; } = BattleSettings.Default;
     
     public DateTime StartTime { get;  } = DateTime.Now;
 
