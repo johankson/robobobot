@@ -24,4 +24,5 @@ public record Location(int X, int Y)
 
         return result;
     }
+    public bool Is(int x, int y) => X == x && Y == y;
 }

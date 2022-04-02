@@ -13,22 +13,29 @@ public class MoveAction : ActionBase
 
     public override Task<ActionExecutionResult> Execute(Battle battle)
     {
-        var targetLocation = player.Location += moveDirection;
-
+        var targetLocation = player.Location + moveDirection;
         var targetCell = battle.BattleField.GetCell(targetLocation);
+        
         if (targetCell.IsMovableTo())
         {
             player.Location = targetLocation;
-            var result = new MoveExecutionResult()
+            var successResult = new MoveExecutionResult()
             {
                 ExecutionDuration = 4000,
-                NewLocation = targetLocation,
-                Success = true,
+                FinalLocation = targetLocation,
+                Success = true
             };
             
-            return Task.FromResult<ActionExecutionResult>(result);
+            return Task.FromResult<ActionExecutionResult>(successResult);
         }
-
-        throw new NotImplementedException("Bad moves not implemented yet");
+        
+        var failureResult = new MoveExecutionResult()
+        {
+            ExecutionDuration = 4000,
+            FinalLocation = player.Location,
+            Success = false
+        };
+            
+        return Task.FromResult<ActionExecutionResult>(failureResult);
     }
 }

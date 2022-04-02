@@ -2,5 +2,5 @@ namespace Robobobot.Core.Actions;
 
 public record MoveExecutionResult : ActionExecutionResult
 {
-    public Location? NewLocation { get; init; }
+    public Location? FinalLocation { get; init; }
 }

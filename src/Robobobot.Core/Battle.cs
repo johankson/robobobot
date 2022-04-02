@@ -27,7 +27,7 @@ public class Battle
 
     public void UsePredefinedBattleField(string preDefinedBattleField)
     {
-        battleField = BattleField.FromPreExistingBattleField(preDefinedBattleField);
+        battleField = BattleField.FromPreExistingMap(preDefinedBattleField);
     }
 
     public BattleType Type { get; set; } = BattleType.Regular;

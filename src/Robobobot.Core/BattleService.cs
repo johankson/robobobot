@@ -40,6 +40,9 @@ public class BattleService
         }
 
         var player = battle.AddPlayer(PlayerType.RemoteBot, playerName);
+        
+        // todo - Arbitrary start position - this should be controlled by the map somehow.
+        player.Location = new Location(10, 10);
 
         for (var i = 0; i < numberOfBots; i++)
         {

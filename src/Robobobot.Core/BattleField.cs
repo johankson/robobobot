@@ -1,18 +1,20 @@
+using static Robobobot.Core.Extensions.CellExtensions;
+
 namespace Robobobot.Core;
 
 public class BattleField
 {
-    public int Width { get; set; }
-    public int Height { get; set; }
+    public int Width { get; }
+    public int Height { get; }
 
-    private Cell[,] cells;
+    private readonly Cell[,] cells;
 
     public BattleField(int width, int height)
     {
         Width = width;
         Height = height;
         cells = new Cell[width, height];
-
+        
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
@@ -27,28 +29,32 @@ public class BattleField
         }
     }
 
-    public static BattleField FromPreExistingBattleField(string battleField)
+    public static BattleField FromPreExistingMap(string map)
     {
         // Figure out bounds
-        battleField = battleField.TrimEnd(Environment.NewLine.ToCharArray());
-        var rows = battleField.Split(Environment.NewLine);
+        map = map.TrimEnd(Environment.NewLine.ToCharArray());
+        var rows = map.Split(Environment.NewLine);
 
         var width = rows.First().Length;
         var height = rows.Length;
 
         var field = new BattleField(width, height);
-
-        for (var y = 0; y < height; y++)
-        {
-            for (var x = 0; x < width; x++)
-            {
-                var row = rows[y];
-                field.cells[x, y].Type = ResolveType(row[x]);
-            }
-        }
+        field.cells.ForEach((x, y, cell) => cell.Type = ResolveType(rows[y][x]));
 
         return field;
     }
+
+    public void ForEachCell(CellAction action)
+    {
+        for (var y = 0; y < Height; y++)
+        {
+            for (var x = 0; x < Width; x++)
+            {
+                action(x, y, cells[x, y]);
+            }
+        }
+    }
+    
     private static CellType ResolveType(char c) => c switch
     {
         'M' => CellType.Mountain,
@@ -61,35 +67,6 @@ public class BattleField
     public Cell GetCell(int x, int y) => cells[x, y];
     public Cell GetCell(Location location) => cells[location.X, location.Y];
 }
-
-public class Cell
-{
-    public int X { get; set; }
-    public int Y { get; set; }
-    
-    public CellType Type { get; set; }
-
-    public char GetCharType() => Type switch
-    {
-        CellType.Land => '.',
-        CellType.Forrest => 'F',
-        CellType.Mountain => 'M',
-        CellType.Swamp => 'S',
-        _ => throw new ArgumentOutOfRangeException()
-    };
-    
-    public bool IsSeeThrough()=> Type switch
-    {
-        CellType.Land => true,
-        CellType.Forrest => false,
-        CellType.Mountain => false,
-        CellType.Swamp => true,
-        _ => throw new ArgumentOutOfRangeException()
-    };
-    
-    public bool IsMovableTo() => Type is CellType.Forrest or CellType.Land;
-}
-
 public enum CellType
 {
     Land,

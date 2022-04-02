@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 
 namespace Robobobot.Core;
@@ -35,17 +36,29 @@ public class BattleRenderer
         return sb.ToString();
     }
 
-    public string RenderBattleField()
+    public string RenderBattleField(bool renderPlayers = false, bool renderWide = false)
     {
         var sb = new StringBuilder();
+        
         for (var row = 0; row < battle.BattleField.Width; row++)
         {
             for (var col = 0; col < battle.BattleField.Height; col++)
             {
-                sb.Append(battle.BattleField.GetCell(col, row).GetCharType()); // Logic here to view something
+                switch (renderPlayers)
+                {
+                    case true when battle.Players.Any(p => p.Location.Is(col, row)):
+                        sb.Append('X');
+                        break;
+                    default:
+                        sb.Append(battle.BattleField.GetCell(col, row).GetCharType());
+                        break;
+                }
+
+                if (renderWide) sb.Append(' ');
             }
             sb.AppendLine("");
         }
+        
         return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
     }
 
