@@ -13,7 +13,7 @@ public static class TestUtils
         var level = await File.ReadAllTextAsync(Path.Combine("Fixtures", levelPath));
         var service = new BattleService();
         var options = new BattleFieldOptions(Predefined: level);
-        var (battle, player) = service.CreateSandboxBattle("Bengt", 2, options);
+        var (battle, player) = service.CreateSandboxBattle("Bengt", options);
 
         return (battle, player, service);
     }

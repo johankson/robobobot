@@ -1,11 +1,79 @@
 @page "/battlefield"
+@using Robobobot.Client
+@using Robobobot.Core.Models
+@using System.Text.RegularExpressions
 
-<PageTitle>BattleField</PageTitle>
+<h1>Manual Sandbox Mode</h1>
 
-<h1>BattleField</h1>
+<p>
+    The sandbox mode is where you learn how to control your bot.
+</p>
 
-<p>Text</p>
+<div class="container">
+     <div class="row justify-content-start">
+         <div class="col-6">
+             @if (string.IsNullOrWhiteSpace(token))
+             {
+                 <CreateSandbox Client="client" Token="s => token = s" Status="SetStatus"/>
+             }
+             else
+             {
+                 <div>
+                     <MovePad OnMove="Move" OnLook="GetVisual"/>
+                     
+                     <div class="form-check">
+                       <input class="form-check-input" type="checkbox" value="" id="autoRefreshVisualCheckBox" @onchange="args => autoRefreshVisualAfterMove = (bool)(args.Value ?? false)">
+                       <label class="form-check-label" for="autoRefreshVisualCheckBox">
+                         Auto refresh view after move
+                       </label>
+                     </div>
+                 </div>
+                 <div>
+                     <MapViewer Map="@battleField"/>
+                 </div>
+             }
+         </div>
+         <div class="col-6">
+             <Log @ref="log" />
+         </div>
+      </div>    
+</div>
 
 @code {
-    
+    Log? log;
+    bool autoRefreshVisualAfterMove;
+    string? battleField;
+    string token = "";
+   
+    static string azureServer = "https://robobobot.azurewebsites.net";
+    static string localServer = "https://localhost:7297";
+    readonly RobobobotClient client = new(azureServer);
+
+    private void SetStatus(string value)
+    {
+        log?.WriteSeparator();
+        log?.WriteLine(value);
+    }
+
+    private async Task GetVisual()
+    {
+        SetStatus("Getting visual");
+        var response = await client.GetVisual();
+        battleField = response.BattleField;
+        SetStatus("Getting visual done (ready)");
+    }
+
+    private async Task Move(MoveDirection direction)
+    {
+        SetStatus($"Moving {direction.ToString()}!");
+
+        var response = await client.Move(direction);
+        
+        SetStatus("Move done (ready)");
+        
+        if (autoRefreshVisualAfterMove && response.Success)
+        {
+            await GetVisual();
+        }
+    }
 }

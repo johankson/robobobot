@@ -1,4 +1,4 @@
-namespace Robobobot.Core.Actions;
+namespace Robobobot.Core.Models;
 
 public record MoveExecutionResult : ActionExecutionResult
 {

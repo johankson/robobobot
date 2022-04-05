@@ -14,6 +14,9 @@ public class RobobobotClient
 {
     private readonly HttpClient httpClient;
     private const string JoinSandboxUri = "/api/Battle/join-sandbox";
+    private const string GetVisualUri = "/api/Battle/get-visual";
+    private const string MoveUri = "/api/Battle/move";
+    private string playerToken = "";
     
     public RobobobotClient(string serverAddress)
     {
@@ -22,10 +25,37 @@ public class RobobobotClient
         httpClient.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("text/plain"));
     }
 
-    public async Task<JoinResponse> CreateSandboxGame(string name, int numberOfBots)
+    public async Task<JoinResponse> CreateSandboxGame(string name, BattleFieldOptions? battleFieldOptions = null, SandboxOptions? sandboxOptions = null)
     {
-        var request = new JoinSandboxRequest(name, numberOfBots).ToHttpContent();
+        var request = new JoinSandboxRequest(name, battleFieldOptions, sandboxOptions).ToHttpContent();
         var result = await httpClient.PostAsync(JoinSandboxUri, request);
-        return await result.Content.ReadFromJsonAsync<JoinResponse>() ?? throw new InvalidOperationException();
+        var joinResponse = await result.Content.ReadFromJsonAsync<JoinResponse>() ?? throw new InvalidOperationException();
+
+        if (result.IsSuccessStatusCode)
+        {
+            playerToken = joinResponse.PlayerToken;
+            httpClient.DefaultRequestHeaders.Add("Token", playerToken);
+        }
+        
+        return joinResponse;
+    }
+
+    public async Task<GetVisualExecutionResult> GetVisual()
+    {
+        var result = await httpClient.GetFromJsonAsync<GetVisualExecutionResult>(GetVisualUri);
+        if (result == null)
+        {
+            throw new Exception("oops");
+        }
+        return result;
+    }
+    public async Task<MoveExecutionResult> Move(MoveDirection direction)
+    {
+        var result = await httpClient.GetFromJsonAsync<MoveExecutionResult>($"{MoveUri}/{direction.ToString()}");
+        if (result == null)
+        {
+            throw new Exception("oops");
+        }
+        return result;
     }
 }

@@ -1,0 +1,80 @@
+@using Robobobot.Client
+@using Robobobot.Core.Models
+@using System.Text.RegularExpressions
+
+
+<div class="box">
+    <h3>Create new sandbox game</h3>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Name</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter your name." value="@name">
+    </div>
+
+    <div class="mb-3">
+        <label for="numberOfBotsInput" class="form-label">Number of bots: (0-10)</label>
+        <input type="number" class="form-control" id="numberOfBotsInput" value="3">
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" value="" id="actionDelayCheck">
+        <label class="form-check-label" for="actionDelayCheck">
+            Use 10X shorter action delays
+        </label>
+    </div>
+
+    <div class="mb-3">
+        <button @onclick="Join" class="btn btn-primary">Create and Join</button>
+    </div>
+</div>
+
+@code {
+    string token = "";
+    string name = "Bob";
+    
+    [Parameter]
+    public RobobobotClient? Client { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> Token { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> Status { get; set; }
+    
+    private async Task Join()
+    {
+        await Status.InvokeAsync("Joining sandbox");
+        var response = await Client!.CreateSandboxGame(name, new BattleFieldOptions(Predefined: GenerateMap()));
+        await Token.InvokeAsync(response.PlayerToken);
+        await Status.InvokeAsync("Joining sandbox done (ready)");
+    }
+    
+    private string GenerateMap()
+    {
+
+        var map = @"....................
+                    ....................
+                    ....................
+                    .......S............
+                    .........S..........
+                    ..........MM........
+                    ...........M........
+                    ....................
+                    ........MMMMMM......
+                    ....................
+                    .S..M...........M...
+                    .S..............M...
+                    .S....SSSS..........
+                    .S..................
+                    ...MMMM.............
+                    ..........FFFFF.....
+                    ..FFFFFFFFFF..FFF...
+                    ....................
+                    ....................
+                    ....................";
+
+    // Remove whitespace
+        map = Regex.Replace(map, @"[^\S\r\n]+", "");
+        
+        return map;
+    }
+}

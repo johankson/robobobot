@@ -62,3 +62,25 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.move-pad-wrapper {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.move-pad-wrapper > * {
+    flex: 1 100%;
+}
+
+.move-pad-wrapper > * > button {
+    width: 3.5rem;
+    margin: 0.1rem;
+}
+
+.box {
+    position: relative;
+    padding: 1rem;
+  
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+}

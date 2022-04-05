@@ -41,7 +41,7 @@ public class BattleController : ControllerBase
     [ProducesResponseType(typeof(JoinResponse), StatusCodes.Status200OK)]
     public IActionResult JoinSandbox([FromBody] JoinSandboxRequest joinRequest)
     {
-        var (battle, player)= battleService.CreateSandboxBattle(joinRequest.Name, joinRequest.NumberOfBots, joinRequest.BattleFieldOptions);
+        var (battle, player)= battleService.CreateSandboxBattle(joinRequest.Name, joinRequest.BattleFieldOptions, joinRequest.SandboxOptions);
         return new OkObjectResult(new JoinResponse(battle.BattleToken, player.Token));
     }
     
@@ -71,37 +71,46 @@ public class BattleController : ControllerBase
     [Route("get-visual")]
     public async Task<IActionResult> GetVisual([FromQuery] PlayerHeaders playerHeaders)
     {
-        if(fpsController.State == FpsControllerState.Paused)
-            fpsController.Resume();
+        return await ExecuteAction(new GetVisualAction(playerHeaders.Token), playerHeaders.Token);
+    }
+
+    [HttpGet]
+    [Route("move/{direction}")]
+    public async Task<IActionResult> Move([FromQuery] PlayerHeaders playerHeaders, MoveDirection direction)
+    {
+        return await ExecuteAction(new MoveAction(playerHeaders.Token, direction), playerHeaders.Token);
+    }
+
+    private async Task<IActionResult> ExecuteAction<T>(T action, string playerToken) where T : ActionBase
+    {
+        if (action == null) throw new ArgumentNullException(nameof(action));
+        if (playerToken == null) throw new ArgumentNullException(nameof(playerToken));
+        if (fpsController.State == FpsControllerState.Paused) fpsController.Resume();
+
+        if (!battleService.RequestActionLock(playerToken))
+        {
+            return new BadRequestObjectResult("You already have a pending action");
+        }
         
         try
         {
-            if (!battleService.RequestActionLock(playerHeaders.Token))
-            {
-                return new BadRequestObjectResult("You already have a pending action");
-            }
-
             // The get the battle and player
-            var battle = battleService.GetBattleByPlayerToken(playerHeaders.Token);
+            var (battle, player) = battleService.GetBattleAndPlayerByPlayerToken(playerToken);
             if (battle is null) return new BadRequestObjectResult("Could not find a battle for the given token...");
-
-            var player = battleService.GetPlayerByToken(playerHeaders.Token);
-            if(player is null)  return new BadRequestObjectResult("Could not find a player for the given token...");
+            if (player is null)  return new BadRequestObjectResult("Could not find a player for the given token...");
             
-            logger.LogInformation("Enqueueing GetVisual Action");
-            var action = await battle.EnqueueAndWait(new GetVisualAction(player));
-            if (action.Result == null)
+            logger.LogInformation($"Enqueueing {action.GetType().Name} Action");
+            var result = await battle.EnqueueAndWait(action);
+            if (result.Result == null)
             {
                 return new BadRequestResult();
             }
             
-            logger.LogInformation("Completed GetVisual Action, waiting the specified time");
-            await Task.Delay(action.Result.ExecutionDuration);
+            logger.LogInformation($"Completed {action.GetType().Name} Action, waiting the specified time");
+            await Task.Delay(result.Result.ExecutionDuration);
 
             logger.LogInformation("Returning result to client");
-            return new OkObjectResult(action.Result);
-
-            return new BadRequestResult();
+            return new OkObjectResult(result.Result);
         }
         catch (Exception e)
         {
@@ -110,7 +119,7 @@ public class BattleController : ControllerBase
         }
         finally
         {
-            battleService.ReleaseActionLock(playerHeaders.Token);
+            battleService.ReleaseActionLock(playerToken);
         }
     }
 }

@@ -1,3 +1,4 @@
+using Robobobot.Core.Models;
 namespace Robobobot.Core.Actions;
 
 public abstract class ActionBase

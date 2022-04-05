@@ -24,9 +24,10 @@ public class BattleService
         }
     }
     
-    public (Battle, Player) CreateSandboxBattle(string playerName, int numberOfBots = 3, BattleFieldOptions? options = null)
+    public (Battle, Player) CreateSandboxBattle(string playerName, BattleFieldOptions? battleFieldOptions = null, SandboxOptions? sandboxOptions = null)
     {
         var id = idGenerator.Generate();
+        sandboxOptions ??= new SandboxOptions();
 
         var battle = new Battle()
         {
@@ -34,9 +35,9 @@ public class BattleService
             Type = BattleType.Sandbox
         };
 
-        if (!string.IsNullOrWhiteSpace(options?.Predefined))
+        if (!string.IsNullOrWhiteSpace(battleFieldOptions?.Predefined))
         {
-            battle.UsePredefinedBattleField(options.Predefined);
+            battle.UsePredefinedBattleField(battleFieldOptions.Predefined);
         }
 
         var player = battle.AddPlayer(PlayerType.RemoteBot, playerName);
@@ -44,7 +45,7 @@ public class BattleService
         // todo - Arbitrary start position - this should be controlled by the map somehow.
         player.Location = new Location(10, 10);
 
-        for (var i = 0; i < numberOfBots; i++)
+        for (var i = 0; i < sandboxOptions.NumberOfBots; i++)
         {
             battle.AddPlayer(PlayerType.ServerBot, $"Server Bot #{i + 1}");
         }
@@ -95,5 +96,12 @@ public class BattleService
             .Where(player => player.Token == playerToken), (b, _) => b.Value).FirstOrDefault();
 
         return battle;
+    }
+
+    public (Battle?, Player?) GetBattleAndPlayerByPlayerToken(string playerToken)
+    {
+        var result = activeBattles.SelectMany(battle => battle.Value.Players
+            .Where(player => player.Token == playerToken), (b, p) => (b.Value, p)).FirstOrDefault();
+        return result;
     }
 }

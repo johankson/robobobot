@@ -100,4 +100,6 @@ public class Battle
             action.CompleteCallback?.Invoke();
         }
     }
+    public Player? FindPlayerByToken(string playerToken) =>
+        players.FirstOrDefault(player => player.Token == playerToken);
 }

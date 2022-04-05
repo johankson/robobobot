@@ -1,7 +1,4 @@
-using System.Diagnostics;
-using System.Runtime.Intrinsics.X86;
-using Robobobot.Core.Actions;
-namespace Robobobot.Core;
+namespace Robobobot.Core.Models;
 
 public record Location(int X, int Y)
 {

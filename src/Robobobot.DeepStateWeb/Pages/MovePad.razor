@@ -1,0 +1,26 @@
+@using Robobobot.Core.Models
+<div class="move-pad-wrapper">
+  <div>
+      <button class="btn btn-primary" @onclick="async () => await OnMove.InvokeAsync(MoveDirection.NorthWest)">↖️</button>
+      <button class="btn btn-primary" @onclick="async () => await OnMove.InvokeAsync(MoveDirection.North)">⬆️</button>
+      <button class="btn btn-primary" @onclick="async () => await OnMove.InvokeAsync(MoveDirection.NorthEast)">↗️</button>
+  </div>
+   <div>
+       <button class="btn btn-primary" @onclick="async () => await OnMove.InvokeAsync(MoveDirection.West)">⬅️</button>
+       <button class="btn btn-primary" @onclick="async () => await OnLook.InvokeAsync()">Look</button>
+       <button class="btn btn-primary" @onclick="async () => await OnMove.InvokeAsync(MoveDirection.East)">➡️</button>
+  </div>
+   <div>
+       <button class="btn btn-primary" @onclick="async () => await OnMove.InvokeAsync(MoveDirection.SouthWest)">↙️</button>
+       <button class="btn btn-primary" @onclick="async () => await OnMove.InvokeAsync(MoveDirection.South)">⬇️</button>
+       <button class="btn btn-primary" @onclick="async () => await OnMove.InvokeAsync(MoveDirection.SouthEast)">↘️</button>
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<MoveDirection> OnMove { get; set; }
+    
+    [Parameter]
+    public EventCallback OnLook { get; set; }
+}

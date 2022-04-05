@@ -25,7 +25,7 @@ public class BattleServiceTests
         var service = new BattleService();
         
         // Act
-        var (battle, _) = service.CreateSandboxBattle("Bengt", 2);
+        var (battle, _) = service.CreateSandboxBattle("Bengt");
         
         // Assert
         battle.Should().NotBeNull();
@@ -41,7 +41,7 @@ public class BattleServiceTests
         var options = new BattleFieldOptions(Predefined: level);
         
         // Act
-        var (battle, _) = service.CreateSandboxBattle("Bengt", 2, options);
+        var (battle, _) = service.CreateSandboxBattle("Bengt", options);
         
         // Assert
         battle.Renderer.RenderBattleField().Should().BeEquivalentTo(level);

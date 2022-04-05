@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Robobobot.Core;
 using Robobobot.Core.Actions;
+using Robobobot.Core.Models;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,7 +22,7 @@ public class MoveActionTests
     {
         // Arrange
         var (battle, player, _) = await TestUtils.CreateSandboxWithPredefinedLevel();
-        var moveAction = new MoveAction(player, MoveDirection.North);
+        var moveAction = new MoveAction(player.Token, MoveDirection.North);
         log.WriteLine("Pre move map:");
         log.WriteLine(battle.Renderer.RenderBattleField(true, true));
 
@@ -44,7 +45,7 @@ public class MoveActionTests
         // Arrange
         var (battle, player, _) = await TestUtils.CreateSandboxWithPredefinedLevel();
         player.Location = new Location(10, 9); // Just below the mountains
-        var moveAction = new MoveAction(player, MoveDirection.North);
+        var moveAction = new MoveAction(player.Token, MoveDirection.North);
         log.WriteLine("Pre move map:");
         log.WriteLine(battle.Renderer.RenderBattleField(true, true));
 
@@ -67,7 +68,7 @@ public class MoveActionTests
         // Arrange
         var (battle, player, _) = await TestUtils.CreateSandboxWithPredefinedLevel();
         player.Location = new Location(4, 17); // Just below the forrest
-        var moveAction = new MoveAction(player, MoveDirection.North);
+        var moveAction = new MoveAction(player.Token, MoveDirection.North);
         log.WriteLine("Pre move map:");
         log.WriteLine(battle.Renderer.RenderBattleField(true, true));
 

@@ -1,19 +1,23 @@
 using Robobobot.Core.Extensions;
+using Robobobot.Core.Models;
 namespace Robobobot.Core.Actions;
 
 public class MoveAction : ActionBase
 {
-    private readonly Player player;
+    private readonly string playerToken;
     private readonly MoveDirection moveDirection;
 
-    public MoveAction(Player player, MoveDirection moveDirection)
+    public MoveAction(string playerToken, MoveDirection moveDirection)
     {
-        this.player = player;
+        this.playerToken = playerToken;
         this.moveDirection = moveDirection;
     }
 
     public override Task<ActionExecutionResult> Execute(Battle battle)
     {
+        var player = battle.FindPlayerByToken(playerToken);
+        if (player == null) throw new Exception($"Can't find player with token '{playerToken}'");
+        
         var targetLocation = player.Location + moveDirection;
         var targetCell = battle.BattleField.GetCell(targetLocation);
         

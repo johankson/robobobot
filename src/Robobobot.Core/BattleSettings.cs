@@ -8,9 +8,9 @@ public class BattleSettings
     {
         MovementDurations = new MovementDurations
         {
-            MoveOverLandInMilliseconds = 3000,
-            MoveThroughForrestInMilliseconds = 6000,
-            FailureToMoveInMilliseconds = 4500
+            MoveOverLandInMilliseconds = 50,
+            MoveThroughForrestInMilliseconds = 100,
+            FailureToMoveInMilliseconds = 140
         }
     };
 }
