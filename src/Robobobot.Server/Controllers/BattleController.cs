@@ -89,7 +89,7 @@ public class BattleController : ControllerBase
 
         if (!battleService.RequestActionLock(playerToken))
         {
-            return new BadRequestObjectResult("You already have a pending action");
+            return new BadRequestObjectResult("You already have a pending action. Please try again later!");
         }
         
         try
