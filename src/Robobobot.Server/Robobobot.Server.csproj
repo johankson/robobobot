@@ -15,11 +15,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Robobobot.Core.Models\Robobobot.Core.Models.csproj" />
       <ProjectReference Include="..\Robobobot.Core\Robobobot.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Pages\Default\Index.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Models" />
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,6 @@
-namespace Robobobot.Core.Actions;
+using Robobobot.Core.Actions;
+
+namespace Robobobot.Core.Models;
 
 public record ActionExecutionResult
 {

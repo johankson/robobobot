@@ -11,6 +11,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{CD2619
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robobobot.DeepStateWeb", "Robobobot.DeepStateWeb\Robobobot.DeepStateWeb.csproj", "{CBDA0367-5E0B-4E95-B899-04912BA3F37E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robobobot.Client", "Robobobot.Client\Robobobot.Client.csproj", "{768DE139-180E-4C47-9213-77FE0849E419}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robobobot.Core.Models", "Robobobot.Core.Models\Robobobot.Core.Models.csproj", "{94EBD9BE-5C55-423D-BF22-3964F92931EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robobobot.Client.IntegrationTests", "Robobobot.Client.IntegrationTests\Robobobot.Client.IntegrationTests.csproj", "{835212C7-161C-4326-ABB9-956B4384D3F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,5 +37,21 @@ Global
 		{4CC09FA6-11CB-4664-8F56-3BFF4C4FB06A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CC09FA6-11CB-4664-8F56-3BFF4C4FB06A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CC09FA6-11CB-4664-8F56-3BFF4C4FB06A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBDA0367-5E0B-4E95-B899-04912BA3F37E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBDA0367-5E0B-4E95-B899-04912BA3F37E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBDA0367-5E0B-4E95-B899-04912BA3F37E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBDA0367-5E0B-4E95-B899-04912BA3F37E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{768DE139-180E-4C47-9213-77FE0849E419}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{768DE139-180E-4C47-9213-77FE0849E419}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{768DE139-180E-4C47-9213-77FE0849E419}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{768DE139-180E-4C47-9213-77FE0849E419}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94EBD9BE-5C55-423D-BF22-3964F92931EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94EBD9BE-5C55-423D-BF22-3964F92931EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94EBD9BE-5C55-423D-BF22-3964F92931EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94EBD9BE-5C55-423D-BF22-3964F92931EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{835212C7-161C-4326-ABB9-956B4384D3F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{835212C7-161C-4326-ABB9-956B4384D3F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{835212C7-161C-4326-ABB9-956B4384D3F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{835212C7-161C-4326-ABB9-956B4384D3F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

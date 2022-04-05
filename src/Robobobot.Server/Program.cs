@@ -1,12 +1,15 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Robobobot.Core;
 using Robobobot.Server.BackgroundServices;
 using Robobobot.Server.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers()
+                .AddJsonOptions(options => 
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {

@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DeepStateWeb and Server" type="CompoundRunConfigurationType">
+    <toRun name="Robobobot.DeepStateWeb" type="LaunchSettings" />
+    <toRun name="Robobobot.Server" type="LaunchSettings" />
+    <method v="2" />
+  </configuration>
+</component>

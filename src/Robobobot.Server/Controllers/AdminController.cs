@@ -17,7 +17,6 @@ public class AdminController : ControllerBase
     [Route("pause-server")]
     public IActionResult PauseServer()
     {
-        int i = 42;
         fpsController.Pause();
         return Ok();
     }

@@ -1,8 +1,9 @@
+using Robobobot.Core.Models;
 namespace Robobobot.Core.Actions;
 
 public abstract class ActionBase
 {
-    public abstract Task<ActionExecutionResult> Execute();
+    public abstract Task<ActionExecutionResult> Execute(Battle battle);
 
     public ActionExecutionResult? Result { get; set; }
 

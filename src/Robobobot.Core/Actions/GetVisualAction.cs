@@ -1,26 +1,34 @@
+using Robobobot.Core.Models;
 using Robobobot.Server.Services;
 
 namespace Robobobot.Core.Actions;
 
 public class GetVisualAction : ActionBase
 {
-    private readonly Player player;
-    private readonly BattleRenderer renderer;
+    private readonly string? playerToken;
+    private Player? player;
 
-    public GetVisualAction(Player player, BattleRenderer renderer)
+    public GetVisualAction(Player player)
     {
         this.player = player;
-        this.renderer = renderer;
+    }
+
+    public GetVisualAction(string playerToken)
+    {
+        this.playerToken = playerToken;
     }
     
-    public override Task<ActionExecutionResult> Execute()
+    public override Task<ActionExecutionResult> Execute(Battle battle)
     {
-        var battleField = renderer.RenderVisualBattlefieldPlayer(player);
+        player ??= battle.Players.FirstOrDefault(p => p.Token == playerToken);
+
+        if (player == null) throw new Exception("Can't resolve player");
+        var battleField = battle.Renderer.RenderVisualBattlefieldPlayer(player);
         
         var result = new GetVisualExecutionResult()
         {
             BattleField = battleField,
-            ExecutionDuration = 2000,
+            ExecutionDuration = 25,
             Success = true
         };
 
