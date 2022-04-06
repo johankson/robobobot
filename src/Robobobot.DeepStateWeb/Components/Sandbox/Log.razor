@@ -1,0 +1,37 @@
+<div class="box">
+    <h3>Log</h3>
+    
+    @foreach (var item in items.Take(30))
+    {
+        <div>@item</div>
+    }
+</div>
+
+@code {
+    List<LogItem> items = new();
+    DateTime startTime = DateTime.Now;
+    
+    public void WriteLine(string value)
+    {
+        var item = new LogItem(DateTime.Now-startTime, value);
+        
+        items.Insert(0, item);
+        StateHasChanged();
+    }
+
+    public void WriteSeparator()
+    {
+        StateHasChanged();
+    }
+    public void ResetLog()
+    {
+        startTime = DateTime.Now;
+        items.Clear();
+        WriteLine($@"Connected to server {startTime:yyyy-MM-dd HH:mm:ss}");
+    }
+
+    public record LogItem(TimeSpan LogDate, string Message)
+    {
+        public override string ToString() => $"{LogDate:mm\\:ss\\.fff}: {Message}";
+    }
+}

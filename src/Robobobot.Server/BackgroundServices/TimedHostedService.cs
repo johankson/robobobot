@@ -55,6 +55,11 @@ public class TimedHostedService : IHostedService, IDisposable, IFpsController
         {
             var count = Interlocked.Increment(ref frameNumber);
             logger.LogInformation("Executing frame #{Count}", count);
+
+            if (battleService.HasNoActiveBattles)
+            {
+                Pause();
+            }
             
             battleService.Update();
         }

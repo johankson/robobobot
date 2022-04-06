@@ -1,20 +1,19 @@
-using Robobobot.Core.Actions;
+using System.Collections.Concurrent;
 using Robobobot.Core.Models;
-using Robobobot.Server.BackgroundServices;
 using Robobobot.Server.Services;
+
 namespace Robobobot.Core;
 
 public class BattleService
 {
-  //  private readonly IFpsController fpsController;
     private readonly IIdGenerator idGenerator;
-    private readonly Dictionary<string, Battle> activeBattles = new();
+    private readonly ConcurrentDictionary<string, Battle> activeBattles = new();
 
     public BattleService()
     {
-        //this.fpsController = fpsController;
-        this.idGenerator = new IdGenerator();
+        idGenerator = new IdGenerator();
     }
+    public bool HasNoActiveBattles => !activeBattles.Any();
 
     public async Task Update()
     {
@@ -22,6 +21,15 @@ public class BattleService
         {
             await battle.Value.Update();
         }
+
+        var staleBattles = activeBattles.Where(battle => battle.Value.IsStale).ToList();
+        staleBattles.ForEach(item => UnloadBattle(item.Key));
+    }
+
+    private void UnloadBattle(string battleToken)
+    {
+        // todo - log
+        activeBattles.Remove(battleToken, out _);
     }
     
     public (Battle, Player) CreateSandboxBattle(string playerName, BattleFieldOptions? battleFieldOptions = null, SandboxOptions? sandboxOptions = null)
@@ -50,7 +58,11 @@ public class BattleService
             battle.AddPlayer(PlayerType.ServerBot, $"Server Bot #{i + 1}");
         }
         
-        activeBattles.Add(id, battle);
+        var couldAdd = activeBattles.TryAdd(id, battle);
+        if (!couldAdd)
+        {
+            throw new Exception("Failed to add the battle to the internal dictionary");
+        }
 
         return (battle, player);
     }
