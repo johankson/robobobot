@@ -84,3 +84,12 @@ a, .btn-link {
     border: 1px solid #dee2e6;
     border-radius: 0.25rem;
 }
+
+.millisecond
+{
+    color: red;
+    font-size: 0.6rem;
+    vertical-align: top;
+    padding-top: 0.3rem;
+    
+}

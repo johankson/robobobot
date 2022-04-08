@@ -31,7 +31,7 @@ public class BattleRenderer
         sb.AppendLine("");
         sb.AppendLine("The battlefield:");
 
-        sb.AppendLine(RenderBattleField());
+        sb.AppendLine(RenderBattleField(renderWide: true, renderPlayers: true));
 
         return sb.ToString();
     }

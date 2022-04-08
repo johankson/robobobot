@@ -6,6 +6,7 @@ using Robobobot.Server.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddControllers()
                 .AddJsonOptions(options => 
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -18,9 +19,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddSingleton<BattleService>();
-builder.Services.AddSingleton<TimedHostedService>();
-builder.Services.AddSingleton<IFpsController>(provider => provider.GetService<TimedHostedService>()!);
-builder.Services.AddHostedService<TimedHostedService>(provider => provider.GetService<TimedHostedService>()!);
+builder.Services.AddSingleton<GameLoopHostedService>();
+builder.Services.AddSingleton<IFpsController>(provider => provider.GetService<GameLoopHostedService>()!);
+builder.Services.AddHostedService<GameLoopHostedService>(provider => provider.GetService<GameLoopHostedService>()!);
 
 builder.Services.AddCors(options =>
 {

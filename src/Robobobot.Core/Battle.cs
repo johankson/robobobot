@@ -80,7 +80,8 @@ public class Battle
     }
 
     private readonly List<ActionBase> nextFrameActions = new();
-    
+    private DateTime lastReceivedActionTimeStamp = DateTime.Now;
+
     public async Task Update()
     {
         // Copy the actions in the buffer
@@ -90,7 +91,21 @@ public class Battle
             frameActions.InsertRange(0, nextFrameActions);
             nextFrameActions.Clear();
         }
-        
+
+        if (frameActions.Any())
+        {
+            lastReceivedActionTimeStamp = DateTime.Now;
+        }
+        else
+        {
+            var diff = DateTime.Now - lastReceivedActionTimeStamp;
+            if (diff.Minutes > Settings.StaleTimeoutInMinutes)
+            {
+                IsStale = true;
+            }
+            return;
+        }
+
         // Execute the actions
         // Todo Sort by type (movement first, the aim and so on)
         foreach (var action in frameActions)
@@ -100,6 +115,13 @@ public class Battle
             action.CompleteCallback?.Invoke();
         }
     }
+    
+    /// <summary>
+    /// Signals that the battle is stale.
+    /// </summary>
+    /// <remarks>This marks that it should be removed from the server.</remarks>
+    public bool IsStale { get; set; }
+
     public Player? FindPlayerByToken(string playerToken) =>
         players.FirstOrDefault(player => player.Token == playerToken);
 }

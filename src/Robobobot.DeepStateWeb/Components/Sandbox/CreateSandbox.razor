@@ -1,13 +1,17 @@
-@using Robobobot.Client
-@using Robobobot.Core.Models
-@using System.Text.RegularExpressions
+
 
 
 <div class="box">
     <h3>Create new sandbox game</h3>
+    
     <div class="mb-3">
-        <label for="exampleFormControlInput1" class="form-label">Name</label>
-        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter your name." value="@name">
+        <label for="serverUrlInput" class="form-label">Server url</label>
+        <input type="text" class="form-control" id="serverUrlInput" placeholder="Server url" value="@ServerUrl">
+    </div>
+    
+    <div class="mb-3">
+        <label for="nameInput" class="form-label">Name</label>
+        <input type="text" class="form-control" id="nameInput" placeholder="Enter your name." value="@name">
     </div>
 
     <div class="mb-3">
@@ -30,9 +34,12 @@
 @code {
     string token = "";
     string name = "Bob";
+
+    [Parameter]
+    public string ServerUrl { get; set; } = "https://robobobot.azurewebsites.net";
     
     [Parameter]
-    public RobobobotClient? Client { get; set; }
+    public EventCallback<RobobobotClient> Client { get; set; }
     
     [Parameter]
     public EventCallback<string> Token { get; set; }
@@ -40,18 +47,28 @@
     [Parameter]
     public EventCallback<string> Status { get; set; }
     
+    [Parameter]
+    public EventCallback OnConnected { get; set; }
+    
     private async Task Join()
     {
         await Status.InvokeAsync("Joining sandbox");
-        var response = await Client!.CreateSandboxGame(name, new BattleFieldOptions(Predefined: GenerateMap()));
+        var client = new RobobobotClient(ServerUrl);
+        var response = await client.CreateSandboxGame(name, new BattleFieldOptions(Predefined: GenerateMap()));
         await Token.InvokeAsync(response.PlayerToken);
-        await Status.InvokeAsync("Joining sandbox done (ready)");
+        await Client.InvokeAsync(client);
+        
+        await OnConnected.InvokeAsync();
+
+        await Status.InvokeAsync($"Joining sandbox done (ready)");
+        await Status.InvokeAsync($"PlayerToken: <pre>{response.PlayerToken}</pre>");
+        await Status.InvokeAsync($"BattleToken: <pre>{response.BattleId}</pre>");
     }
     
     private string GenerateMap()
     {
 
-        var map = @"....................
+        var map = @".....MMMMMM.........
                     ....................
                     ....................
                     .......S............
@@ -68,11 +85,9 @@
                     ...MMMM.............
                     ..........FFFFF.....
                     ..FFFFFFFFFF..FFF...
-                    ....................
-                    ....................
                     ....................";
 
-    // Remove whitespace
+        // Remove whitespace
         map = Regex.Replace(map, @"[^\S\r\n]+", "");
         
         return map;

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Robobobot.Core;
 using Robobobot.Server.BackgroundServices;
 namespace Robobobot.Server.Controllers;
 
@@ -7,10 +8,12 @@ namespace Robobobot.Server.Controllers;
 public class AdminController : ControllerBase
 {
     private readonly IFpsController fpsController;
+    private readonly BattleService battleService;
 
-    public AdminController(IFpsController fpsController)
+    public AdminController(IFpsController fpsController, BattleService battleService)
     {
         this.fpsController = fpsController;
+        this.battleService = battleService;
     }
 
     [HttpGet]
@@ -18,6 +21,7 @@ public class AdminController : ControllerBase
     public IActionResult PauseServer()
     {
         fpsController.Pause();
+        battleService.ServerLog.Log($"Pausing server awaiting manual start or new battle initiation");
         return Ok();
     }
     
@@ -26,6 +30,7 @@ public class AdminController : ControllerBase
     public IActionResult ResumeServer()
     {
         fpsController.Resume();
+        battleService.ServerLog.Log($"Resuming server with game loop running at {fpsController.Fps} fps.");
         return Ok();
     }
     
@@ -36,7 +41,7 @@ public class AdminController : ControllerBase
         var stats = new ServerStats(fpsController.State.ToString(), fpsController.Fps);
         return new OkObjectResult(stats);
     }
-
+    
     private record ServerStats(string State, int Fps);
     
     [HttpGet]
@@ -44,7 +49,22 @@ public class AdminController : ControllerBase
     public IActionResult SetFps(int fps)
     {
         fpsController.Fps = fps;
+        battleService.ServerLog.Log($"Setting fps to {fps}");
         return Ok();
+    }
+
+    /// <summary>
+    /// View the server log
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("view-log")]
+    [Produces("text/plain")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    public IActionResult ViewLog()
+    {
+        var log = string.Join(Environment.NewLine, battleService.ServerLog.GetLast(1000));
+        return new OkObjectResult(log);
     }
 }
 

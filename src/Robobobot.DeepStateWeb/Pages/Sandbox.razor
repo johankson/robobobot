@@ -1,20 +1,23 @@
-@page "/battlefield"
-@using Robobobot.Client
-@using Robobobot.Core.Models
-@using System.Text.RegularExpressions
+@page "/sandbox"
+
+<PageTitle>Sandbox mode</PageTitle>
 
 <h1>Manual Sandbox Mode</h1>
 
-<p>
-    The sandbox mode is where you learn how to control your bot.
-</p>
-
+<div class="container description">
+    <div class="row-cols-8">
+        <div class="col-9">
+            The sandbox mode is where you learn how to control your bot. The point here is to examine which actions can be
+            sent and what the response is. Click on the row in the log to see what call was made and view the response data.
+        </div>
+    </div>
+</div>
 <div class="container">
      <div class="row justify-content-start">
          <div class="col-6">
              @if (string.IsNullOrWhiteSpace(token))
              {
-                 <CreateSandbox Client="client" Token="s => token = s" Status="SetStatus"/>
+                 <CreateSandbox Client="c => client = c" Token="s => token = s" Status="SetStatus" OnConnected="Connected"/>
              }
              else
              {
@@ -22,7 +25,7 @@
                      <MovePad OnMove="Move" OnLook="GetVisual"/>
                      
                      <div class="form-check">
-                       <input class="form-check-input" type="checkbox" value="" id="autoRefreshVisualCheckBox" @onchange="args => autoRefreshVisualAfterMove = (bool)(args.Value ?? false)">
+                       <input class="form-check-input" type="checkbox" @bind="autoRefreshVisualAfterMove" id="autoRefreshVisualCheckBox">
                        <label class="form-check-label" for="autoRefreshVisualCheckBox">
                          Auto refresh view after move
                        </label>
@@ -41,13 +44,11 @@
 
 @code {
     Log? log;
-    bool autoRefreshVisualAfterMove;
+    bool autoRefreshVisualAfterMove = true;
     string? battleField;
     string token = "";
    
-    static string azureServer = "https://robobobot.azurewebsites.net";
-    static string localServer = "https://localhost:7297";
-    readonly RobobobotClient client = new(azureServer);
+    RobobobotClient? client;
 
     private void SetStatus(string value)
     {
@@ -55,8 +56,24 @@
         log?.WriteLine(value);
     }
 
+    private async Task Connected()
+    {
+        log?.ResetLog();
+        
+        if (autoRefreshVisualAfterMove)
+        {
+            await GetVisual();
+        }
+    }
+
     private async Task GetVisual()
     {
+        if (client is null)
+        {
+            SetStatus("The client is null, something is wrong...");
+            return;
+        }
+        
         SetStatus("Getting visual");
         var response = await client.GetVisual();
         battleField = response.BattleField;
@@ -65,6 +82,12 @@
 
     private async Task Move(MoveDirection direction)
     {
+        if (client is null)
+        {
+            SetStatus("The client is null, something is wrong...");
+            return;
+        }
+         
         SetStatus($"Moving {direction.ToString()}!");
 
         var response = await client.Move(direction);

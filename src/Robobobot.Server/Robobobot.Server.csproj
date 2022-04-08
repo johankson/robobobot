@@ -12,6 +12,7 @@
     <ItemGroup>
         <PackageReference Include="shortid" Version="3.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -21,10 +22,6 @@
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Pages\Default\Index.cshtml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Models" />
     </ItemGroup>
 
 </Project>
