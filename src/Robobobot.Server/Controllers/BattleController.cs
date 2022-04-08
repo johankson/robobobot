@@ -48,6 +48,7 @@ public class BattleController : ControllerBase
     [HttpGet]
     [Route("view-battle-raw")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [Produces("text/plain")]
     public IActionResult ViewBattleRaw(string battleId)
     {
         // this should be protected by a viewer ID so clients don't use this info
@@ -58,9 +59,32 @@ public class BattleController : ControllerBase
         }
 
         var renderer = new BattleRenderer(battle);
-    
         return new OkObjectResult(renderer.RenderAsText());
     }
+    
+    [HttpGet]
+    [Route("view-battle")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    public IActionResult ViewBattle(string battleId)
+    {
+        // this should be protected by a viewer ID so clients don't use this info
+        var battle = battleService.Get(battleId);
+        if (battle is null)
+        {
+            return new NotFoundResult();
+        }
+
+        var result = new
+        {
+            BattleField = new BattleRenderer(battle).RenderBattleField(renderPlayers: true),
+            battle.BattleField.Width,
+            battle.BattleField.Height,
+            battle.Players
+        };
+        
+        return new OkObjectResult(result);
+    }
+
 
     /// <summary>
     /// Gets the playing fields visual representation seen from your tank.

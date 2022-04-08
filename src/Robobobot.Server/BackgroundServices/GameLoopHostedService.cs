@@ -21,6 +21,7 @@ public class GameLoopHostedService : IHostedService, IDisposable, IFpsController
     public Task StartAsync(CancellationToken stoppingToken)
     {
         logger.LogInformation("Game loop is running");
+        battleService.ServerLog.Log("Starting game loop hosted service");
 
         timer = new Timer(ExecuteGameTick, null, Timeout.InfiniteTimeSpan, TimeSpan.Zero);
         Fps = 10;
@@ -60,6 +61,7 @@ public class GameLoopHostedService : IHostedService, IDisposable, IFpsController
             if (battleService.HasNoActiveBattles && State != FpsControllerState.Running)
             {
                 logger.LogInformation("Pausing game loop since there are no active battles");
+                battleService.ServerLog.Log("Pausing game loop since there are no active battles");
                 Pause();
             }
             
@@ -74,6 +76,7 @@ public class GameLoopHostedService : IHostedService, IDisposable, IFpsController
     public Task StopAsync(CancellationToken stoppingToken)
     {
         logger.LogInformation("Game loop timer is stopping");
+        battleService.ServerLog.Log("Stopping game loop hosted service");
         SetTimer(Timeout.InfiniteTimeSpan, TimeSpan.Zero);
 
         return Task.CompletedTask;

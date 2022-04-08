@@ -99,7 +99,7 @@ public class Battle
         else
         {
             var diff = DateTime.Now - lastReceivedActionTimeStamp;
-            if (diff.Minutes > 5)
+            if (diff.Minutes > Settings.StaleTimeoutInMinutes)
             {
                 IsStale = true;
             }

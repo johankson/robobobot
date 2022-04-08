@@ -8,6 +8,8 @@ public class Player
     public string Name { get; set; } = "Player";
     public PlayerType Type { get; set; } = PlayerType.RemoteBot;
     public Location Location { get; set; } = new(0, 0);
+    public int TurretDegree { get; set; } = 0;
+    public int TankDegree { get; set; } = 0;
 
     public bool RequestActionLock()
     {

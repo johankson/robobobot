@@ -1,6 +1,4 @@
-@using Robobobot.Client
-@using Robobobot.Core.Models
-@using System.Text.RegularExpressions
+
 
 
 <div class="box">
@@ -54,7 +52,7 @@
     
     private async Task Join()
     {
-        await Status.InvokeAsync("Joining sandbox yayyy");
+        await Status.InvokeAsync("Joining sandbox");
         var client = new RobobobotClient(ServerUrl);
         var response = await client.CreateSandboxGame(name, new BattleFieldOptions(Predefined: GenerateMap()));
         await Token.InvokeAsync(response.PlayerToken);
@@ -63,8 +61,8 @@
         await OnConnected.InvokeAsync();
 
         await Status.InvokeAsync($"Joining sandbox done (ready)");
-        await Status.InvokeAsync($"PlayerToken: {response.PlayerToken}");
-        await Status.InvokeAsync($"BattleToken: {response.BattleId})");
+        await Status.InvokeAsync($"PlayerToken: <pre>{response.PlayerToken}</pre>");
+        await Status.InvokeAsync($"BattleToken: <pre>{response.BattleId}</pre>");
     }
     
     private string GenerateMap()

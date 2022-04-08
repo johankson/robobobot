@@ -12,8 +12,11 @@ public class BattleService
     public BattleService()
     {
         idGenerator = new IdGenerator();
+        ServerLog = new InMemoryLog();
     }
     public bool HasNoActiveBattles => !activeBattles.Any();
+    
+    public ILog ServerLog { get; }
 
     public async Task Update()
     {
@@ -28,43 +31,55 @@ public class BattleService
 
     private void UnloadBattle(string battleToken)
     {
-        // todo - log
         activeBattles.Remove(battleToken, out _);
+        ServerLog.Log($"Unloaded battle with id '{battleToken}");
     }
     
     public (Battle, Player) CreateSandboxBattle(string playerName, BattleFieldOptions? battleFieldOptions = null, SandboxOptions? sandboxOptions = null)
     {
-        var id = idGenerator.Generate();
-        sandboxOptions ??= new SandboxOptions();
+        ServerLog.Log($"Creating Sandbox Battle for player {playerName}");
 
-        var battle = new Battle()
+        try
         {
-            BattleToken = id,
-            Type = BattleType.Sandbox
-        };
+            var id = idGenerator.Generate();
+            sandboxOptions ??= new SandboxOptions();
 
-        if (!string.IsNullOrWhiteSpace(battleFieldOptions?.Predefined))
-        {
-            battle.UsePredefinedBattleField(battleFieldOptions.Predefined);
+            var battle = new Battle()
+            {
+                BattleToken = id,
+                Type = BattleType.Sandbox
+            };
+
+            if (!string.IsNullOrWhiteSpace(battleFieldOptions?.Predefined))
+            {
+                battle.UsePredefinedBattleField(battleFieldOptions.Predefined);
+            }
+
+            var player = battle.AddPlayer(PlayerType.RemoteBot, playerName);
+
+            // todo - Arbitrary start position - this should be controlled by the map somehow.
+            player.Location = new Location(10, 10);
+
+            for (var i = 0; i < sandboxOptions.NumberOfBots; i++)
+            {
+                battle.AddPlayer(PlayerType.ServerBot, $"Server Bot #{i + 1}");
+            }
+
+            var couldAdd = activeBattles.TryAdd(id, battle);
+            if (!couldAdd)
+            {
+                throw new Exception("Failed to add the battle to the internal dictionary");
+            }
+            
+            ServerLog.Log($"Creating Sandbox Battle Complete. BattleId: '{battle.BattleToken}'");
+
+            return (battle, player);
         }
-
-        var player = battle.AddPlayer(PlayerType.RemoteBot, playerName);
-        
-        // todo - Arbitrary start position - this should be controlled by the map somehow.
-        player.Location = new Location(10, 10);
-
-        for (var i = 0; i < sandboxOptions.NumberOfBots; i++)
+        catch (Exception e)
         {
-            battle.AddPlayer(PlayerType.ServerBot, $"Server Bot #{i + 1}");
+            ServerLog.Log($"Failed to create Sandbox Battle. Exception message: '{e.Message}'");
+            throw;
         }
-        
-        var couldAdd = activeBattles.TryAdd(id, battle);
-        if (!couldAdd)
-        {
-            throw new Exception("Failed to add the battle to the internal dictionary");
-        }
-
-        return (battle, player);
     }
     
     public Battle? Get(string battleId) => !activeBattles.ContainsKey(battleId) ? null : activeBattles[battleId];
