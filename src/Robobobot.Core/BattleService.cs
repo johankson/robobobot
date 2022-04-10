@@ -32,12 +32,12 @@ public class BattleService
     private void UnloadBattle(string battleToken)
     {
         activeBattles.Remove(battleToken, out _);
-        ServerLog.Log($"Unloaded battle with id '{battleToken}'");
+        ServerLog.Log($"Unloaded battle with id '{battleToken}");
     }
     
     public (Battle, Player) CreateSandboxBattle(string playerName, BattleFieldOptions? battleFieldOptions = null, SandboxOptions? sandboxOptions = null)
     {
-        ServerLog.Log($"Creating Sandbox Battle for player '{playerName}'");
+        ServerLog.Log($"Creating Sandbox Battle for player {playerName}");
 
         try
         {
@@ -71,7 +71,7 @@ public class BattleService
                 throw new Exception("Failed to add the battle to the internal dictionary");
             }
             
-            ServerLog.Log($"Creating Sandbox Battle Complete. BattleId '{battle.BattleToken}'");
+            ServerLog.Log($"Creating Sandbox Battle Complete. BattleId: '{battle.BattleToken}'");
 
             return (battle, player);
         }
