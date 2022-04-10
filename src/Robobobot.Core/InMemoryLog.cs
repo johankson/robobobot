@@ -17,6 +17,6 @@ public class InMemoryLog : ILog
 
     public void Log(string message)
     {
-        log.Add($"{DateTime.Now:s} {message}");
+        log.Add($"{DateTime.Now:yyyy-MM-ddTHH:mm:ss.FFF} {message}");
     }
 }

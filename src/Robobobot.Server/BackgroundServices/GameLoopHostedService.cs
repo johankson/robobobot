@@ -58,7 +58,7 @@ public class GameLoopHostedService : IHostedService, IDisposable, IFpsController
             var count = Interlocked.Increment(ref frameNumber);
             logger.LogTrace("Executing frame #{Count}", count);
 
-            if (battleService.HasNoActiveBattles && State != FpsControllerState.Running)
+            if (battleService.HasNoActiveBattles && State == FpsControllerState.Running)
             {
                 logger.LogInformation("Pausing game loop since there are no active battles");
                 battleService.ServerLog.Log("Pausing game loop since there are no active battles");
