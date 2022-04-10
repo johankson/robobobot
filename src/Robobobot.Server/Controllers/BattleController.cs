@@ -42,6 +42,13 @@ public class BattleController : ControllerBase
     public IActionResult JoinSandbox([FromBody] JoinSandboxRequest joinRequest)
     {
         var (battle, player)= battleService.CreateSandboxBattle(joinRequest.Name, joinRequest.BattleFieldOptions, joinRequest.SandboxOptions);
+       
+        if (fpsController.State != FpsControllerState.Running)
+        {
+            battleService.ServerLog.Log($"Server not running, starting it at {fpsController.Fps} fps");
+            fpsController.Resume();
+        }
+        
         return new OkObjectResult(new JoinResponse(battle.BattleToken, player.Token));
     }
     
@@ -123,17 +130,17 @@ public class BattleController : ControllerBase
             if (battle is null) return new BadRequestObjectResult("Could not find a battle for the given token...");
             if (player is null)  return new BadRequestObjectResult("Could not find a player for the given token...");
             
-            logger.LogInformation($"Enqueueing {action.GetType().Name} Action");
+            battleService.ServerLog.Log($"Enqueueing '{action.GetType().Name}' Action for player '{playerToken}'");
             var result = await battle.EnqueueAndWait(action);
             if (result.Result == null)
             {
                 return new BadRequestResult();
             }
             
-            logger.LogInformation($"Completed {action.GetType().Name} Action, waiting the specified time");
+            battleService.ServerLog.Log($"Completed '{action.GetType().Name}' Action for player '{playerToken}', waiting the specified time of {result.Result.ExecutionDuration} ms");
             await Task.Delay(result.Result.ExecutionDuration);
 
-            logger.LogInformation("Returning result to client");
+            battleService.ServerLog.Log($"Returning result for '{action.GetType().Name}' to player '{playerToken}'");
             return new OkObjectResult(result.Result);
         }
         catch (Exception e)
