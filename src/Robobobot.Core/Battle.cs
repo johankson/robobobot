@@ -43,11 +43,17 @@ public class Battle
 
     public Player AddPlayer(PlayerType playerType, string name)
     {
+        if (players.Count == 9)
+        {
+            throw new Exception("We cant handle more than nine players since we use a digit as the short token. Letters will be implemented later on if needed.");
+        }
+        
         var player = new Player()
         {
             Token = idGenerator.Generate(),
             Type = playerType,
-            Name = name 
+            Name = name,
+            ShortToken = (players.Count+1).ToString().ToCharArray().First()
         };
 
         players.Add(player);

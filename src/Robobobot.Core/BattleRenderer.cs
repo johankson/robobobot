@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
+using Robobobot.Core.Models;
 
 namespace Robobobot.Core;
 
@@ -69,18 +70,35 @@ public class BattleRenderer
         {
             for (var col = 0; col < battle.BattleField.Height; col++)
             {
-                if (col == player.Location.X && row == player.Location.Y)
+                if (player.Location.Is(col, row))
+                {
                     sb.Append('X');
+                }
+         
                 else
                 {
                     var c = IsCellVisibleForPlayer(player, col, row) ? battle.BattleField.GetCell(col, row).GetCharType() : ' ';
-                    sb.Append(c);
+                    if (c !=' ' && IsEnemyAtLocation(Location.Create(col, row), out char shortEnemyToken))
+                    {
+                        sb.Append(shortEnemyToken);
+                    }
+                    else
+                    {
+                        sb.Append(c);
+                    }
+                   
                 }
             }
             sb.AppendLine("");
         }
         return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
     }
+    private bool IsEnemyAtLocation(Location location, out char shortToken)
+    {
+        shortToken = battle.Players.FirstOrDefault(p => p.Location == location)?.ShortToken ?? ' ';
+        return shortToken != ' ';
+    }
+    
     private bool IsCellVisibleForPlayer(Player player, int x, int y)
     {
         // Naive first implementation

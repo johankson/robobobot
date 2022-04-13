@@ -58,11 +58,12 @@ public class BattleService
             var player = battle.AddPlayer(PlayerType.RemoteBot, playerName);
 
             // todo - Arbitrary start position - this should be controlled by the map somehow.
-            player.Location = new Location(10, 10);
+            player.Location = battle.BattleField.GetNextStartPosition(battle.Settings.RandomizeStartPositionAssignment);
 
             for (var i = 0; i < sandboxOptions.NumberOfBots; i++)
             {
-                battle.AddPlayer(PlayerType.ServerBot, $"Server Bot #{i + 1}");
+                var enemy =battle.AddPlayer(PlayerType.ServerBot, $"Server Bot #{i + 1}");
+                enemy.Location = battle.BattleField.GetNextStartPosition(battle.Settings.RandomizeStartPositionAssignment);
             }
 
             var couldAdd = activeBattles.TryAdd(id, battle);

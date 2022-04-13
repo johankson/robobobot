@@ -21,5 +21,10 @@ public record Location(int X, int Y)
 
         return result;
     }
+    
     public bool Is(int x, int y) => X == x && Y == y;
+    
+    public static Location Create(int x, int y) => new(x, y);
+    
+    public static Location Random(int maxX, int maxY) => new(System.Random.Shared.Next(maxX), System.Random.Shared.Next(maxY));
 }
