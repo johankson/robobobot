@@ -49,7 +49,7 @@ public class BattleController : ControllerBase
             fpsController.Resume();
         }
         
-        return new OkObjectResult(new JoinResponse(battle.BattleToken, player.Token));
+        return new OkObjectResult(new JoinResponse(battle.BattleToken, player.Token, player.Name));
     }
     
     [HttpGet]

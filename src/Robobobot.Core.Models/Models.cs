@@ -2,7 +2,7 @@ namespace Robobobot.Core.Models;
 
 
 public record JoinRequest(string BattleId, string PlayerToken);
-public record JoinResponse(string BattleId, string PlayerToken);
+public record JoinResponse(string BattleToken, string PlayerToken, string PlayerName);
 
 /// <summary>
 /// Request a sandbox battle to be created.
@@ -26,4 +26,4 @@ public record BattleFieldOptions(string Seed = "", int Width = 100, int Height =
 /// Options controlling how the sandbox is created.
 /// </summary>
 /// <param name="SpeedModifier"></param>
-public record SandboxOptions(float SpeedModifier = 1f, int NumberOfBots = 3);
+public record SandboxOptions(float SpeedModifier = 1f, int NumberOfBots = 3, Location? PlayerStartPosition = null);

@@ -62,7 +62,7 @@ public class BattleService
 
             var player = battle.AddPlayer(PlayerType.RemoteBot, playerName);
             
-            player.Location = battle.BattleField.GetNextStartPosition(battle.Settings.RandomizeStartPositionAssignment);
+            player.Location = sandboxOptions.PlayerStartPosition ?? battle.BattleField.GetNextStartPosition(battle.Settings.RandomizeStartPositionAssignment);
 
             for (var i = 0; i < sandboxOptions.NumberOfBots; i++)
             {

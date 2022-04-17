@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Robobobot.Core;
+using Robobobot.Core.Models;
 using Robobobot.Server.BackgroundServices;
 namespace Robobobot.Server.Controllers;
 
@@ -65,6 +66,14 @@ public class AdminController : ControllerBase
     {
         var log = string.Join(Environment.NewLine, battleService.ServerLog.GetLast(1000));
         return new OkObjectResult(log);
+    }
+
+    [HttpGet]
+    [Route("move-player")]
+    public IActionResult MovePlayer(string playerToken, int x, int y)
+    {
+        battleService.GetPlayerByToken(playerToken)!.Location = Location.Create(x, y);
+        return new OkResult();
     }
 }
 

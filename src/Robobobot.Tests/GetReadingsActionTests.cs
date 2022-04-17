@@ -6,7 +6,7 @@ using Robobobot.Core.Models;
 using Xunit;
 namespace Robobobot.Tests;
 
-public class GetReadingsTests
+public class GetReadingsActionTests
 {
     [Fact]
     public async Task ShouldGetBaseReadingsAtStartOfGame()
