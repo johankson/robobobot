@@ -2,7 +2,7 @@ namespace Robobobot.Core;
 
 public class BattleSettings
 {
-    public MovementDurations MovementDurations { get; set; } = new ();
+    public ExecutionDurations ExecutionDurations { get; set; } = new ();
 
     /// <summary>
     /// The turret is always in the same direction as the tank.
@@ -12,12 +12,13 @@ public class BattleSettings
 
     public static BattleSettings Default => new ()
     {
-        MovementDurations = new MovementDurations
+        ExecutionDurations = new ExecutionDurations
         {
             AimDurationPerDegree = 10,
             MoveOverLandInMilliseconds = 50,
             MoveThroughForrestInMilliseconds = 100,
-            FailureToMoveInMilliseconds = 140
+            MoveFailureInMilliseconds = 140,
+            GetReadingInMilliseconds = 50
         }
     };
     
@@ -34,14 +35,17 @@ public class BattleSettings
     public bool RandomizeStartPositionAssignment { get; set; } = false;
 }
 
-public class MovementDurations
+public class ExecutionDurations
 {
     public int MoveOverLandInMilliseconds { get; set; }
     public int MoveThroughForrestInMilliseconds { get; set; }
-    public int FailureToMoveInMilliseconds { get; set; }
+    public int MoveFailureInMilliseconds { get; set; }
     
     /// <summary>
     /// The time to aim per degree of movement.
     /// </summary>
     public int AimDurationPerDegree { get; set; }
+    
+    public int GetReadingInMilliseconds { get; set; }
 }
+

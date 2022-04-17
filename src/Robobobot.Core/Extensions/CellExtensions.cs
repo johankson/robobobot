@@ -18,8 +18,8 @@ public static class CellExtensions
     public static int ResolveDuration(this Cell cell, Battle battle) =>
         cell.Type switch
         {
-            CellType.Land => battle.Settings.MovementDurations.MoveOverLandInMilliseconds,
-            CellType.Forrest => battle.Settings.MovementDurations.MoveThroughForrestInMilliseconds,
+            CellType.Land => battle.Settings.ExecutionDurations.MoveOverLandInMilliseconds,
+            CellType.Forrest => battle.Settings.ExecutionDurations.MoveThroughForrestInMilliseconds,
             CellType.Mountain => throw new Exception("You can't move through mountains. You're not a dwarf from Lord of the Rings."),
             CellType.Swamp => throw new Exception("You can't move through a swamp unless you identify as a boat."),
             _ => throw new Exception("You cannot move to this cell")

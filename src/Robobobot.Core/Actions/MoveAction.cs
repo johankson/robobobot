@@ -39,7 +39,7 @@ public class MoveAction : ActionBase
 
         var failureResult = new MoveExecutionResult()
         {
-            ExecutionDuration = battle.Settings.MovementDurations.FailureToMoveInMilliseconds,
+            ExecutionDuration = battle.Settings.ExecutionDurations.MoveFailureInMilliseconds,
             FinalLocation = player.Location,
             Success = false
         };

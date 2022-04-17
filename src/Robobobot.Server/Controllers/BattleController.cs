@@ -111,6 +111,25 @@ public class BattleController : ControllerBase
     {
         return await ExecuteAction(new MoveAction(playerHeaders.Token, direction), playerHeaders.Token);
     }
+    
+    [HttpGet]
+    [Route("aim/{deltaangle}")]
+    public async Task<IActionResult> Aim([FromQuery] PlayerHeaders playerHeaders, int deltaangle)
+    {
+        return await ExecuteAction(new AimAction(playerHeaders.Token, deltaangle), playerHeaders.Token);
+    }
+    
+    /// <summary>
+    /// Gets the readings from the instruments in your tank.
+    /// </summary>
+    /// <param name="playerHeaders">The headers.</param>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("get-readings")]
+    public async Task<IActionResult> GetReadings([FromQuery] PlayerHeaders playerHeaders)
+    {
+        return await ExecuteAction(new GetReadingsAction(playerHeaders.Token), playerHeaders.Token);
+    }
 
     private async Task<IActionResult> ExecuteAction<T>(T action, string playerToken) where T : ActionBase
     {
