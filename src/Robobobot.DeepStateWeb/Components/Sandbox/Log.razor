@@ -23,14 +23,14 @@
     {
         StateHasChanged();
     }
-    
+
     public void ResetLog()
     {
         startTime = DateTime.Now;
         items.Clear();
         WriteLine($@"Connected to server {startTime:yyyy-MM-dd HH:mm:ss}");
     }
-  
+
     public record LogItem(TimeSpan LogDate, string Message)
     {
         public MarkupString ToRawString() => (MarkupString)ToString();

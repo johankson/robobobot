@@ -1,5 +1,4 @@
 using Robobobot.Core.Actions;
-using Robobobot.Server.BackgroundServices;
 using Robobobot.Server.Services;
 namespace Robobobot.Core;
 
@@ -24,8 +23,6 @@ public class Battle
         // todo create a battlefield generator...
         throw new NotImplementedException();
     }
-
-    
 
     public void UsePredefinedBattleField(string preDefinedBattleField)
     {
@@ -107,6 +104,7 @@ public class Battle
         else
         {
             var diff = DateTime.Now - lastReceivedActionTimeStamp;
+
             if (diff.Minutes > Settings.StaleTimeoutInMinutes)
             {
                 IsStale = true;
