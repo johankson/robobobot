@@ -8,7 +8,7 @@ public class Battle
     private readonly List<Player> players = new();
     private readonly IIdGenerator idGenerator = new IdGenerator();
     private readonly BattleRenderer renderer;
-    private BattleField battleField = new BattleField(20, 20);
+    private BattleField battleField = new(20, 20);
 
     public Battle()
     {
@@ -24,6 +24,8 @@ public class Battle
         // todo create a battlefield generator...
         throw new NotImplementedException();
     }
+
+    
 
     public void UsePredefinedBattleField(string preDefinedBattleField)
     {

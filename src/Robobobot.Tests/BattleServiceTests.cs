@@ -4,6 +4,7 @@ using FluentAssertions;
 using NSubstitute;
 using Robobobot.Core;
 using Robobobot.Core.Models;
+using Robobobot.Core.Parsers;
 using Robobobot.Server.BackgroundServices;
 using Xunit;
 
@@ -44,6 +45,6 @@ public class BattleServiceTests
         var (battle, _) = service.CreateSandboxBattle("Bengt", options);
         
         // Assert
-        battle.Renderer.RenderBattleField().Should().BeEquivalentTo(level);
+        battle.Renderer.RenderBattleField().Should().BeEquivalentTo(new BattleFieldParser().Parse(level).map);
     }
 }

@@ -54,10 +54,14 @@ public class BattleService
             {
                 battle.UsePredefinedBattleField(battleFieldOptions.Predefined);
             }
+            else
+            {
+                // For the time being, just add the default start positions along the edge of the map (8 of them)
+                battle.BattleField.AddDefaultStartLocations();
+            }
 
             var player = battle.AddPlayer(PlayerType.RemoteBot, playerName);
-
-            // todo - Arbitrary start position - this should be controlled by the map somehow.
+            
             player.Location = battle.BattleField.GetNextStartPosition(battle.Settings.RandomizeStartPositionAssignment);
 
             for (var i = 0; i < sandboxOptions.NumberOfBots; i++)

@@ -1,4 +1,5 @@
 using Robobobot.Core.Models;
+using Robobobot.Core.Parsers;
 using static Robobobot.Core.Extensions.CellExtensions;
 
 namespace Robobobot.Core;
@@ -33,44 +34,45 @@ public class BattleField
     public static BattleField FromPreExistingMap(string map)
     {
         // Figure out bounds
-        map = map.TrimEnd(Environment.NewLine.ToCharArray());
-
-        var fieldPart = map.Split(Environment.NewLine + Environment.NewLine);
-        var rows = fieldPart[0].Split(Environment.NewLine);
-
-        var width = rows.First().Length;
-        var height = rows.Length;
-
-        var field = new BattleField(width, height);
-        field.cells.ForEach((x, y, cell) => cell.Type = ResolveType(rows[y][x]));
-
-        if (fieldPart.Any(f => f.StartsWith("START_POSITIONS")))
-        {
-            var values = fieldPart.First(f => f.StartsWith("START_POSITIONS")).Split(Environment.NewLine).Skip(1).Select(s =>
-            {
-                var arr = s.Split(',');
-                return Location.Create(Int32.Parse(arr[0]), Int32.Parse(arr[1]));
-            });
-            field.startPositions.AddRange(values);
-        }
-        else
-        {
-            
+        var parser = new BattleFieldParser();
+        var (field, width, height, argumentsGroups) = parser.Parse(map);
         
-        // no settings at all - quick start position randomization
-            for (int i = 0; i < 10; i++)
-            {
-                var location = Location.Random(width, height);
-                while (field.startPositions.Contains(location))
-                {
-                    location = Location.Random(width, height);
-                }
-                
-                field.startPositions.Add(location);
-            }
-        }
+        var rows = field.Split(Environment.NewLine);
+        var battleField = new BattleField(width, height);
+        battleField.cells.ForEach((x, y, cell) => cell.Type = ResolveType(rows[y][x]));
+
+        // Default values
+        battleField.AddDefaultStartLocations();
         
-        return field;
+        foreach (var group in argumentsGroups)
+        {
+            battleField.argumentResolvers.FirstOrDefault(e=>e.Name == group.Key)?.Resolve(battleField, group.Value);   
+        }
+
+        return battleField;
+    }
+
+    private readonly List<ArgumentResolver> argumentResolvers = new()
+    {
+        new StartPositionResolver()
+    };
+    
+    /// <summary>
+    /// Creates 8 start positions located along the edges of the map.
+    /// </summary>
+    public void AddDefaultStartLocations()
+    {
+        StartPositions = new List<Location>()
+        {
+            Location.Create(2, 2),
+            Location.Create(Width / 2, 2),
+            Location.Create(Width - 2, 2),
+            Location.Create(2, Height / 2),
+            Location.Create(Width / 2, Height / 2),
+            Location.Create(2, Height - 2),
+            Location.Create(Width / 2, Height - 2),
+            Location.Create(Width - 2, Height - 2)
+        };
     }
 
     public void ForEachCell(CellAction action)
@@ -96,15 +98,17 @@ public class BattleField
     public Cell GetCell(int x, int y) => cells[x, y];
     public Cell GetCell(Location location) => cells[location.X, location.Y];
 
-    private List<Location> startPositions = new();
+    internal List<Location> StartPositions = new();
 
     public Location GetNextStartPosition(bool randomizeStartPositionAssignment)
     {
-        var index = randomizeStartPositionAssignment ? Random.Shared.Next(startPositions.Count) : 0;
-        var location = startPositions[index];
-        startPositions.RemoveAt(index);
+        var index = randomizeStartPositionAssignment ? Random.Shared.Next(StartPositions.Count) : 0;
+        var location = StartPositions[index];
+        StartPositions.RemoveAt(index);
         return location;
     }
+    public bool IsInsideMap(Location location) =>
+        !(location.X < 0 || location.Y < 0 || location.X > Width - 1 || location.Y > Height - 1);
 }
 public enum CellType
 {
