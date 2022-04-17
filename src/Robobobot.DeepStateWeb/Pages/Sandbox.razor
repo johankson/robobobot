@@ -1,9 +1,4 @@
 @page "/sandbox"
-@using Robobobot.Client
-@using Robobobot.Core.Models
-@using Robobobot.DeepStateWeb.Components.Sandbox
-@using Robobobot.DeepStateWeb.Components.Map
-@using Robobobot.DeepStateWeb.Components.Utils
 
 <PageTitle>Sandbox mode</PageTitle>
 
@@ -52,9 +47,7 @@
     bool autoRefreshVisualAfterMove = true;
     string? battleField;
     string token = "";
-   
-   // static string azureServer = "https://robobobot.azurewebsites.net";
-   // static string localServer = "https://localhost:7297";
+    
     RobobobotClient? client;
 
     private void SetStatus(string value)

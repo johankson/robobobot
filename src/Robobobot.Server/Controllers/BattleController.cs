@@ -42,12 +42,20 @@ public class BattleController : ControllerBase
     public IActionResult JoinSandbox([FromBody] JoinSandboxRequest joinRequest)
     {
         var (battle, player)= battleService.CreateSandboxBattle(joinRequest.Name, joinRequest.BattleFieldOptions, joinRequest.SandboxOptions);
+       
+        if (fpsController.State != FpsControllerState.Running)
+        {
+            battleService.ServerLog.Log($"Server not running, starting it at {fpsController.Fps} fps");
+            fpsController.Resume();
+        }
+        
         return new OkObjectResult(new JoinResponse(battle.BattleToken, player.Token));
     }
     
     [HttpGet]
     [Route("view-battle-raw")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [Produces("text/plain")]
     public IActionResult ViewBattleRaw(string battleId)
     {
         // this should be protected by a viewer ID so clients don't use this info
@@ -58,9 +66,32 @@ public class BattleController : ControllerBase
         }
 
         var renderer = new BattleRenderer(battle);
-    
         return new OkObjectResult(renderer.RenderAsText());
     }
+    
+    [HttpGet]
+    [Route("view-battle")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    public IActionResult ViewBattle(string battleId)
+    {
+        // this should be protected by a viewer ID so clients don't use this info
+        var battle = battleService.Get(battleId);
+        if (battle is null)
+        {
+            return new NotFoundResult();
+        }
+
+        var result = new
+        {
+            BattleField = new BattleRenderer(battle).RenderBattleField(renderPlayers: true),
+            battle.BattleField.Width,
+            battle.BattleField.Height,
+            battle.Players
+        };
+        
+        return new OkObjectResult(result);
+    }
+
 
     /// <summary>
     /// Gets the playing fields visual representation seen from your tank.
@@ -99,17 +130,17 @@ public class BattleController : ControllerBase
             if (battle is null) return new BadRequestObjectResult("Could not find a battle for the given token...");
             if (player is null)  return new BadRequestObjectResult("Could not find a player for the given token...");
             
-            logger.LogInformation($"Enqueueing {action.GetType().Name} Action");
+            battleService.ServerLog.Log($"Enqueueing '{action.GetType().Name}' Action for player '{playerToken}'");
             var result = await battle.EnqueueAndWait(action);
             if (result.Result == null)
             {
                 return new BadRequestResult();
             }
             
-            logger.LogInformation($"Completed {action.GetType().Name} Action, waiting the specified time");
+            battleService.ServerLog.Log($"Completed '{action.GetType().Name}' Action for player '{playerToken}', waiting the specified time of {result.Result.ExecutionDuration} ms");
             await Task.Delay(result.Result.ExecutionDuration);
 
-            logger.LogInformation("Returning result to client");
+            battleService.ServerLog.Log($"Returning result for '{action.GetType().Name}' to player '{playerToken}'");
             return new OkObjectResult(result.Result);
         }
         catch (Exception e)

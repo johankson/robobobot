@@ -1,11 +1,6 @@
-@using Robobobot.Client
-@using Robobobot.Core.Models
-@using System.Text.RegularExpressions
-
-
 <div class="box">
     <h3>Create new sandbox game</h3>
-    
+
     <div class="mb-3">
         <label for="serverUrlInput" class="form-label">Server url</label>
         <input type="text" class="form-control" id="serverUrlInput" placeholder="Server url" value="@ServerUrl">
@@ -34,7 +29,6 @@
 </div>
 
 @code {
-    string token = "";
     string name = "Bob";
 
     [Parameter]
@@ -54,22 +48,22 @@
     
     private async Task Join()
     {
-        await Status.InvokeAsync("Joining sandbox yayyy");
+        await Status.InvokeAsync("Joining sandbox");
+
         var client = new RobobobotClient(ServerUrl);
-        var response = await client.CreateSandboxGame(name, new BattleFieldOptions(Predefined: GenerateMap()));
-        await Token.InvokeAsync(response.PlayerToken);
+        var (battleId, playerToken) = await client.CreateSandboxGame(name, new BattleFieldOptions(Predefined: GenerateMap()));
+        await Token.InvokeAsync(playerToken);
         await Client.InvokeAsync(client);
         
         await OnConnected.InvokeAsync();
 
         await Status.InvokeAsync($"Joining sandbox done (ready)");
-        await Status.InvokeAsync($"PlayerToken: {response.PlayerToken}");
-        await Status.InvokeAsync($"BattleToken: {response.BattleId})");
+        await Status.InvokeAsync($"PlayerToken: <pre>{playerToken}</pre>");
+        await Status.InvokeAsync($"BattleToken: <pre>{battleId}</pre>");
     }
     
     private string GenerateMap()
     {
-
         var map = @".....MMMMMM.........
                     ....................
                     ....................

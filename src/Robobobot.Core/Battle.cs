@@ -1,5 +1,4 @@
 using Robobobot.Core.Actions;
-using Robobobot.Server.BackgroundServices;
 using Robobobot.Server.Services;
 namespace Robobobot.Core;
 
@@ -8,7 +7,7 @@ public class Battle
     private readonly List<Player> players = new();
     private readonly IIdGenerator idGenerator = new IdGenerator();
     private readonly BattleRenderer renderer;
-    private BattleField battleField = new BattleField(20, 20);
+    private BattleField battleField = new(20, 20);
 
     public Battle()
     {
@@ -43,11 +42,17 @@ public class Battle
 
     public Player AddPlayer(PlayerType playerType, string name)
     {
+        if (players.Count == 9)
+        {
+            throw new Exception("We cant handle more than nine players since we use a digit as the short token. Letters will be implemented later on if needed.");
+        }
+        
         var player = new Player()
         {
             Token = idGenerator.Generate(),
             Type = playerType,
-            Name = name 
+            Name = name,
+            ShortToken = (players.Count+1).ToString().ToCharArray().First()
         };
 
         players.Add(player);
@@ -99,7 +104,8 @@ public class Battle
         else
         {
             var diff = DateTime.Now - lastReceivedActionTimeStamp;
-            if (diff.Minutes > 5)
+
+            if (diff.Minutes > Settings.StaleTimeoutInMinutes)
             {
                 IsStale = true;
             }

@@ -22,6 +22,7 @@ public class GetVisualActionTests
         var options = new BattleFieldOptions(Predefined: level);
         var (battle, player) = service.CreateSandboxBattle("test", battleFieldOptions: options);
         player.Location = new Location(10, 10);
+        battle.Settings.RandomizeStartPositionAssignment = false;
 
         // Act
         var action = new GetVisualAction(player);

@@ -31,7 +31,7 @@ public class GetVisualAction : ActionBase
             ExecutionDuration = 25,
             Success = true
         };
-
+        
         return Task.FromResult<ActionExecutionResult>(result);
     }
 }

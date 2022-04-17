@@ -7,9 +7,9 @@ namespace Robobobot.Tests;
 
 public static class TestUtils
 {
-    public static async Task<(Battle, Player, BattleService)> CreateSandboxWithPredefinedLevel()
+    public static async Task<(Battle, Player, BattleService)> CreateSandboxWithPredefinedLevel(string? predefinedPath = null)
     {
-        const string levelPath = "Actions/GetVisual/1_Level.txt";
+        var levelPath = predefinedPath ?? "Actions/GetVisual/1_Level.txt";
         var level = await File.ReadAllTextAsync(Path.Combine("Fixtures", levelPath));
         var service = new BattleService();
         var options = new BattleFieldOptions(Predefined: level);

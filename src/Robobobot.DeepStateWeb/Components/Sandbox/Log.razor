@@ -3,7 +3,7 @@
     
     @foreach (var item in items.Take(30))
     {
-        <div>@item</div>
+        <div>@item.ToRawString()</div>
     }
 </div>
 
@@ -23,6 +23,7 @@
     {
         StateHasChanged();
     }
+
     public void ResetLog()
     {
         startTime = DateTime.Now;
@@ -32,6 +33,7 @@
 
     public record LogItem(TimeSpan LogDate, string Message)
     {
-        public override string ToString() => $"{LogDate:mm\\:ss\\.fff}: {Message}";
+        public MarkupString ToRawString() => (MarkupString)ToString();
+        public override string ToString() => $"{LogDate:mm\\:ss}<span class=\"millisecond\">{LogDate:fff}</span>: {Message}";
     }
 }

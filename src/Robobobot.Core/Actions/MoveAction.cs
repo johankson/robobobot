@@ -19,21 +19,24 @@ public class MoveAction : ActionBase
         if (player == null) throw new Exception($"Can't find player with token '{playerToken}'");
         
         var targetLocation = player.Location + moveDirection;
-        var targetCell = battle.BattleField.GetCell(targetLocation);
-        
-        if (targetCell.IsMovableTo())
+        if (battle.BattleField.IsInsideMap(targetLocation))
         {
-            player.Location = targetLocation;
-            var successResult = new MoveExecutionResult()
+            var targetCell = battle.BattleField.GetCell(targetLocation);
+
+            if (targetCell.IsMovableTo())
             {
-                ExecutionDuration = targetCell.ResolveDuration(battle),
-                FinalLocation = targetLocation,
-                Success = true
-            };
-            
-            return Task.FromResult<ActionExecutionResult>(successResult);
+                player.Location = targetLocation;
+                var successResult = new MoveExecutionResult()
+                {
+                    ExecutionDuration = targetCell.ResolveDuration(battle),
+                    FinalLocation = targetLocation,
+                    Success = true
+                };
+
+                return Task.FromResult<ActionExecutionResult>(successResult);
+            }
         }
-        
+
         var failureResult = new MoveExecutionResult()
         {
             ExecutionDuration = battle.Settings.MovementDurations.FailureToMoveInMilliseconds,
