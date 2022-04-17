@@ -8,8 +8,16 @@ public class Player
     public string Name { get; set; } = "Player";
     public PlayerType Type { get; set; } = PlayerType.RemoteBot;
     public Location Location { get; set; } = new(0, 0);
+    
+    /// <summary>
+    /// The current angle of the turret relative to the tanks heading, CW, 0 is the angle that the tank is facing. 
+    /// </summary>
     public int TurretDegree { get; set; } = 0;
-    public int TankDegree { get; set; } = 0;
+    
+    /// <summary>
+    /// The current heading of the tank, in degrees. CW, 0 is up.
+    /// </summary>
+    public int TankHeading { get; set; } = 0;
     
     /// <summary>
     /// 

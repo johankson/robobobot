@@ -95,7 +95,19 @@ public class BattleField
         _ => throw new Exception($"Unsupported map token '{c}'")
     };
 
-    public Cell GetCell(int x, int y) => cells[x, y];
+    public Cell GetCell(int x, int y)
+    {
+        try
+        {
+            return cells[x, y];
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     public Cell GetCell(Location location) => cells[location.X, location.Y];
 
     internal List<Location> StartPositions = new();

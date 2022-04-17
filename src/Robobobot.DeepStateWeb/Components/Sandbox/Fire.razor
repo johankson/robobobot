@@ -1,0 +1,8 @@
+<div class="fire-wrapper">
+    <button class="btn btn-primary" @onclick="async () => await OnClick.InvokeAsync()">Fire</button>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+}

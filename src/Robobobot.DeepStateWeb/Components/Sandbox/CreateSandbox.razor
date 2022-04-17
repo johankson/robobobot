@@ -1,9 +1,12 @@
+
+
+
 <div class="box">
     <h3>Create new sandbox game</h3>
 
     <div class="mb-3">
         <label for="serverUrlInput" class="form-label">Server url</label>
-        <input type="text" class="form-control" id="serverUrlInput" placeholder="Server url" value="@ServerUrl">
+        <input type="text" class="form-control" id="serverUrlInput" placeholder="Server url" @bind="serverUrl">
     </div>
     
     <div class="mb-3">
@@ -29,13 +32,12 @@
 </div>
 
 @code {
+    string token = "";
     string name = "Bob";
-
+    string serverUrl = "https://robobobot.azurewebsites.net";
+     
     [Parameter]
-    public string ServerUrl { get; set; } = "https://robobobot.azurewebsites.net";
-    
-    [Parameter]
-    public EventCallback<RobobobotClient> Client { get; set; }
+    public EventCallback<RobobobotClient> OnClientCreated { get; set; }
     
     [Parameter]
     public EventCallback<string> Token { get; set; }
@@ -49,21 +51,21 @@
     private async Task Join()
     {
         await Status.InvokeAsync("Joining sandbox");
-
-        var client = new RobobobotClient(ServerUrl);
-        var (battleId, playerToken) = await client.CreateSandboxGame(name, new BattleFieldOptions(Predefined: GenerateMap()));
-        await Token.InvokeAsync(playerToken);
-        await Client.InvokeAsync(client);
+        var client = new RobobobotClient(serverUrl);
+        var response = await client.CreateSandboxGame(name, new BattleFieldOptions(Predefined: GenerateMap()));
+        await Token.InvokeAsync(response.PlayerToken);
+        await OnClientCreated.InvokeAsync(client);
         
         await OnConnected.InvokeAsync();
 
         await Status.InvokeAsync($"Joining sandbox done (ready)");
-        await Status.InvokeAsync($"PlayerToken: <pre>{playerToken}</pre>");
-        await Status.InvokeAsync($"BattleToken: <pre>{battleId}</pre>");
+        await Status.InvokeAsync($"PlayerToken: <pre>{response.PlayerToken}</pre>");
+        await Status.InvokeAsync($"BattleToken: <pre>{response.BattleToken}</pre>");
     }
     
     private string GenerateMap()
     {
+
         var map = @".....MMMMMM.........
                     ....................
                     ....................
@@ -81,7 +83,17 @@
                     ...MMMM.............
                     ..........FFFFF.....
                     ..FFFFFFFFFF..FFF...
-                    ....................";
+                    ....................
+
+                    START_POSITIONS
+                    - 10,10
+                    - 1,3
+                    - 5,9
+                    - 17,7
+                    - 6,18
+                    - 10,16
+                    - 3,5
+                    - 12,6";
 
         // Remove whitespace
         map = Regex.Replace(map, @"[^\S\r\n]+", "");

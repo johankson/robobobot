@@ -17,18 +17,26 @@
          <div class="col-6">
              @if (string.IsNullOrWhiteSpace(token))
              {
-                 <CreateSandbox Client="c => client = c" Token="s => token = s" Status="SetStatus" OnConnected="Connected"/>
+                 <CreateSandbox OnClientCreated="c => client = c" Token="s => token = s" Status="SetStatus" OnConnected="Connected"/>
              }
              else
              {
                  <div>
+                     <div class="d-flex flex-row">
                      <MovePad OnMove="Move" OnLook="GetVisual"/>
-                     
+
+                         <div class="d-flex flex-column">
+                            <GetReadings OnClick="GetReadings"/>
+                            <Aim OnClick="Aim" />
+                            <Fire OnClick="Fire" />
+                         </div>
+                     </div>
+
                      <div class="form-check">
-                       <input class="form-check-input" type="checkbox" @bind="autoRefreshVisualAfterMove" id="autoRefreshVisualCheckBox">
-                       <label class="form-check-label" for="autoRefreshVisualCheckBox">
-                         Auto refresh view after move
-                       </label>
+                         <input class="form-check-input" type="checkbox" @bind="autoRefreshVisualAfterMove" id="autoRefreshVisualCheckBox">
+                         <label class="form-check-label" for="autoRefreshVisualCheckBox">
+                             Auto refresh view after move
+                         </label>
                      </div>
                  </div>
                  <div>
@@ -78,6 +86,51 @@
         var response = await client.GetVisual();
         battleField = response.BattleField;
         SetStatus("Getting visual done (ready)");
+    }
+
+    private async Task Fire()
+    {
+        
+    }
+
+    private async Task GetReadings()
+    {
+        if (client is null)
+        {
+            SetStatus("The client is null, something is wrong...");
+            return;
+        }
+        
+        SetStatus("Getting reading");
+        var response = await client.GetReadings();
+        if (response.Success)
+        {
+            foreach (var item in response.Values)
+            {
+                SetStatus($"{item.Key}: {item.Value}");
+            }
+        }
+        
+        
+        SetStatus("Getting reading done (ready)");
+    }
+    
+    private async Task Aim(int degrees)
+    {
+        if (client is null)
+        {
+            SetStatus("The client is null, something is wrong...");
+            return;
+        }
+        
+        SetStatus($"Aiming {degrees} degrees");
+        var response = await client.Aim(degrees);
+        if (response.Success)
+        {
+            SetStatus($"Aiming complete, aiming at {response.FinalAngle} (relative to the tanks heading)");
+        }
+        
+        SetStatus("Aiming (ready)");
     }
 
     private async Task Move(MoveDirection direction)

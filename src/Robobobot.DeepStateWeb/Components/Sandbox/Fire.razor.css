@@ -1,0 +1,14 @@
+.fire-wrapper
+{
+    display: flex;
+    flex-direction: row;
+    width: 20rem;
+    padding-left: 1rem;
+    align-items: flex-start;
+    height: 2.5rem;
+}
+
+.fire-wrapper > button
+{
+    width: 10rem;
+}

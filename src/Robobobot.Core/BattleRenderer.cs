@@ -65,33 +65,39 @@ public class BattleRenderer
 
     public string RenderVisualBattlefieldPlayer(Player player)
     {
-        var sb = new StringBuilder();
-        for (var row = 0; row < battle.BattleField.Width; row++)
+        try
         {
-            for (var col = 0; col < battle.BattleField.Height; col++)
+            var sb = new StringBuilder();
+            for (var row = 0; row < battle.BattleField.Height; row++)
             {
-                if (player.Location.Is(col, row))
+                for (var col = 0; col < battle.BattleField.Width; col++)
                 {
-                    sb.Append('X');
-                }
-         
-                else
-                {
-                    var c = IsCellVisibleForPlayer(player, col, row) ? battle.BattleField.GetCell(col, row).GetCharType() : ' ';
-                    if (c !=' ' && IsEnemyAtLocation(Location.Create(col, row), out char shortEnemyToken))
+                    if (player.Location.Is(col, row))
                     {
-                        sb.Append(shortEnemyToken);
+                        sb.Append('X');
                     }
                     else
                     {
-                        sb.Append(c);
+                        var c = IsCellVisibleForPlayer(player, col, row) ? battle.BattleField.GetCell(col, row).GetCharType() : ' ';
+                        if (c != ' ' && IsEnemyAtLocation(Location.Create(col, row), out char shortEnemyToken))
+                        {
+                            sb.Append(shortEnemyToken);
+                        }
+                        else
+                        {
+                            sb.Append(c);
+                        }
                     }
-                   
                 }
+                sb.AppendLine("");
             }
-            sb.AppendLine("");
+            return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
         }
-        return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     private bool IsEnemyAtLocation(Location location, out char shortToken)
     {
@@ -116,23 +122,30 @@ public class BattleRenderer
         var steps = diff.Length() * 2f;
         var cursor = v1;
 
-        for (var step = 0; step < steps; step++)
+        try
         {
-            cursor += stepDirection;
-
-            var dx = (int)(cursor.X);
-            var dy = (int)(cursor.Y);
-
-            if (!battle.BattleField.GetCell(dx, dy).IsSeeThrough())
+            for (var step = 0; step < steps; step++)
             {
-                if (dx == x && dy == y)
+                cursor += stepDirection;
+
+                var dx = (int)(cursor.X);
+                var dy = (int)(cursor.Y);
+
+                if (dx < 0 || dx > battle.BattleField.Width - 1 || dy < 0 || dy > battle.BattleField.Height - 1)
+                    continue;
+
+                if (battle.BattleField.GetCell(dx, dy).IsSeeThrough())
                 {
-                    // It's the last cell, so we do see this one
-                    return true;
+                    continue;
                 }
                 
-                return false;
+                return dx == x && dy == y;
             }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
 
         return true;

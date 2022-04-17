@@ -36,7 +36,7 @@ public class MoveActionTests
         result.Should().NotBeNull();
         result!.FinalLocation?.Y.Should().Be(9);
         result.Success.Should().BeTrue();
-        result.ExecutionDuration.Should().Be(BattleSettings.Default.MovementDurations.MoveOverLandInMilliseconds);
+        result.ExecutionDuration.Should().Be(BattleSettings.Default.ExecutionDurations.MoveOverLandInMilliseconds);
     }
     
     [Fact]
@@ -59,7 +59,7 @@ public class MoveActionTests
         result.Should().NotBeNull();
         result!.FinalLocation?.Y.Should().Be(9);
         result.Success.Should().BeFalse();
-        result.ExecutionDuration.Should().Be(BattleSettings.Default.MovementDurations.FailureToMoveInMilliseconds);
+        result.ExecutionDuration.Should().Be(BattleSettings.Default.ExecutionDurations.MoveFailureInMilliseconds);
     }
     
     [Fact]
@@ -82,7 +82,7 @@ public class MoveActionTests
         result.Should().NotBeNull();
         result!.FinalLocation?.Y.Should().Be(16);
         result.Success.Should().BeTrue();
-        result.ExecutionDuration.Should().Be(BattleSettings.Default.MovementDurations.MoveThroughForrestInMilliseconds);
+        result.ExecutionDuration.Should().Be(BattleSettings.Default.ExecutionDurations.MoveThroughForrestInMilliseconds);
     }
 
     [Theory]
