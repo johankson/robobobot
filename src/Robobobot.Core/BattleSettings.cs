@@ -26,6 +26,12 @@ public class BattleSettings
     /// mark it for removal from the server.
     /// </summary>
     public int StaleTimeoutInMinutes { get; set; } = 5;
+    
+    /// <summary>
+    /// If set to true, then the players are randomized on the available start
+    /// positions that are set for the current map.
+    /// </summary>
+    public bool RandomizeStartPositionAssignment { get; set; } = false;
 }
 
 public class MovementDurations
