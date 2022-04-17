@@ -56,6 +56,7 @@ public class GameLoopHostedService : IHostedService, IDisposable, IFpsController
         try
         {
             var count = Interlocked.Increment(ref frameNumber);
+
             logger.LogTrace("Executing frame #{Count}", count);
 
             if (battleService.HasNoActiveBattles && State == FpsControllerState.Running)
