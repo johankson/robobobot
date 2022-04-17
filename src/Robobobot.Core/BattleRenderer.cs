@@ -67,8 +67,6 @@ public class BattleRenderer
     {
         try
         {
-
-
             var sb = new StringBuilder();
             for (var row = 0; row < battle.BattleField.Height; row++)
             {
@@ -78,7 +76,6 @@ public class BattleRenderer
                     {
                         sb.Append('X');
                     }
-
                     else
                     {
                         var c = IsCellVisibleForPlayer(player, col, row) ? battle.BattleField.GetCell(col, row).GetCharType() : ' ';
@@ -90,7 +87,6 @@ public class BattleRenderer
                         {
                             sb.Append(c);
                         }
-
                     }
                 }
                 sb.AppendLine("");

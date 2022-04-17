@@ -1,0 +1,24 @@
+.aim-wrapper
+{
+    display: flex;
+    flex-direction: row;
+    padding-left: 1rem;
+    align-items: flex-start;
+    height: 2.6rem;
+    padding-bottom: 0.3rem;
+}
+
+.aim-wrapper > input
+{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 5px 0 0 5px; 
+    border-right: 0px;
+}
+
+.aim-wrapper > button
+{
+    height: 2.5rem;
+    width: 7.5rem;
+    border-radius: 0 5px 5px 0;
+}

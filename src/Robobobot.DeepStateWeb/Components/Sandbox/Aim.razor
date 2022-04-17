@@ -1,0 +1,11 @@
+<div class="aim-wrapper">
+      <input @bind="Angle"/> 
+      <button class="btn btn-primary" @onclick="async () => await OnClick.InvokeAsync(Angle)">Turn turret</button>
+</div>
+
+@code {
+      [Parameter]
+      public EventCallback<int> OnClick { get; set; }
+     
+      private int Angle { get; set; } = 0;
+}

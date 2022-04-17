@@ -1,0 +1,9 @@
+
+<div class="get-readings-wrapper">
+    <button class="btn btn-primary" @onclick="async () => await OnClick.InvokeAsync()">Get Readings</button>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+}

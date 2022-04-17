@@ -15,6 +15,8 @@ public class RobobobotClient
     private readonly HttpClient httpClient;
     private const string JoinSandboxUri = "/api/Battle/join-sandbox";
     private const string GetVisualUri = "/api/Battle/get-visual";
+    private const string GetReadingsUri = "/api/Battle/get-readings";
+    private const string AimUri = "/api/Battle/aim";
     private const string MoveUri = "/api/Battle/move";
     private string playerToken = "";
     
@@ -52,6 +54,24 @@ public class RobobobotClient
     public async Task<MoveExecutionResult> Move(MoveDirection direction)
     {
         var result = await httpClient.GetFromJsonAsync<MoveExecutionResult>($"{MoveUri}/{direction.ToString()}");
+        if (result == null)
+        {
+            throw new Exception("oops");
+        }
+        return result;
+    }
+    public async Task<GetReadingsResult> GetReadings()
+    {
+        var result = await httpClient.GetFromJsonAsync<GetReadingsResult>($"{GetReadingsUri}");
+        if (result == null)
+        {
+            throw new Exception("oops");
+        }
+        return result;
+    }
+    public async Task<AimActionResult> Aim(int degrees)
+    {
+        var result = await httpClient.GetFromJsonAsync<AimActionResult>($"{AimUri}/{degrees}");
         if (result == null)
         {
             throw new Exception("oops");

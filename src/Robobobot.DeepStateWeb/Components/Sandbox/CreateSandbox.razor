@@ -34,10 +34,10 @@
 @code {
     string token = "";
     string name = "Bob";
-    string serverUrl = " dsadahttps://robobobot.azurewebsites.net";
+    string serverUrl = "https://robobobot.azurewebsites.net";
      
     [Parameter]
-    public EventCallback<RobobobotClient> Client { get; set; }
+    public EventCallback<RobobobotClient> OnClientCreated { get; set; }
     
     [Parameter]
     public EventCallback<string> Token { get; set; }
@@ -54,7 +54,7 @@
         var client = new RobobobotClient(serverUrl);
         var response = await client.CreateSandboxGame(name, new BattleFieldOptions(Predefined: GenerateMap()));
         await Token.InvokeAsync(response.PlayerToken);
-        await Client.InvokeAsync(client);
+        await OnClientCreated.InvokeAsync(client);
         
         await OnConnected.InvokeAsync();
 
