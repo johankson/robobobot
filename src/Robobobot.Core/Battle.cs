@@ -1,10 +1,10 @@
 using Robobobot.Core.Actions;
 using Robobobot.Server.Services;
-
 namespace Robobobot.Core;
 
 public class Battle
 {
+    private readonly List<Shell> shells = new();
     private readonly List<Player> players = [];
     private readonly IIdGenerator idGenerator = new IdGenerator();
     private readonly BattleRenderer renderer;
@@ -175,7 +175,7 @@ public class Battle
     /// Signals that the battle is stale.
     /// </summary>
     /// <remarks>This marks that it should be removed from the server.</remarks>
-    public bool IsStale { get; private set; }
+    public bool IsStale { get; set; }
 
     public Player? FindPlayerByToken(string playerToken) =>
         players.FirstOrDefault(player => player.Token == playerToken);
