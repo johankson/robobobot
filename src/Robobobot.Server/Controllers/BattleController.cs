@@ -104,6 +104,19 @@ public class BattleController : ControllerBase
     {
         return await ExecuteAction(new GetVisualAction(playerHeaders.Token), playerHeaders.Token);
     }
+    
+    /// <summary>
+    /// Fires the gun!
+    /// </summary>
+    /// <param name="playerHeaders">The headers.</param>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("fire")]
+    public async Task<IActionResult> Fire([FromQuery] PlayerHeaders playerHeaders)
+    {
+        return await ExecuteAction(new FireAction(playerHeaders.Token), playerHeaders.Token);
+    }
+
 
     [HttpGet]
     [Route("move/{direction}")]

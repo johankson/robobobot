@@ -135,6 +135,8 @@ public class Battle
         {
             shell.Update(elapsedGameTime, this);
         }
+
+        shells.RemoveAll(x => x.MarkForDeletion);
     }
     
     /// <summary>
