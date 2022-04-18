@@ -18,7 +18,8 @@ public class BattleSettings
             MoveOverLandInMilliseconds = 50,
             MoveThroughForrestInMilliseconds = 100,
             MoveFailureInMilliseconds = 140,
-            GetReadingInMilliseconds = 50
+            GetReadingInMilliseconds = 50,
+            FireInMilliseconds = 1000
         }
     };
     
@@ -32,7 +33,15 @@ public class BattleSettings
     /// If set to true, then the players are randomized on the available start
     /// positions that are set for the current map.
     /// </summary>
-    public bool RandomizeStartPositionAssignment { get; set; } = false;
+    public bool RandomizeStartPositionAssignment { get; set; }
+    
+    /// <summary>
+    /// The number of units that the standard shell can travel in open
+    /// landscape.
+    /// 
+    /// Default value is 10.
+    /// </summary>
+    public float ShellRange { get; set; } = 10;
 }
 
 public class ExecutionDurations
@@ -47,5 +56,10 @@ public class ExecutionDurations
     public int AimDurationPerDegree { get; set; }
     
     public int GetReadingInMilliseconds { get; set; }
+    
+    /// <summary>
+    /// The time it takes to handle the fire action.
+    /// </summary>
+    public int FireInMilliseconds { get; set; }
 }
 

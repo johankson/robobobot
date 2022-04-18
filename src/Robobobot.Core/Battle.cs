@@ -135,9 +135,14 @@ public class Battle
 
     private readonly List<ActionBase> nextFrameActions = new();
     private DateTime lastReceivedActionTimeStamp = DateTime.Now;
+    private DateTime lastUpdate = DateTime.Now;
 
     public async Task Update()
     {
+        // Calc the elapsed time for this battle, diff = from beginning of last update to the beginning of this one.
+        var elapsedGameTime = (float) (DateTime.Now - lastUpdate).TotalMilliseconds;
+        lastUpdate = DateTime.Now;
+        
         // Copy the actions in the buffer
         var frameActions = new List<ActionBase>();
         lock (nextFrameActions)
@@ -169,6 +174,14 @@ public class Battle
             action.Result = result;
             action.CompleteCallback?.Invoke();
         }
+
+        // Update the dangerous stuff flying around.
+        foreach (var shell in shells)
+        {
+            shell.Update(elapsedGameTime, this);
+        }
+
+        shells.RemoveAll(x => x.MarkForDeletion);
     }
     
     /// <summary>

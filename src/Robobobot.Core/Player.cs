@@ -48,6 +48,15 @@ public class Player
 
     private bool hasPendingAction;
     private readonly object pendingActionLock = new();
-    
-    
+
+
+    /// <summary>
+    /// Called when this player gets hit by a shell.
+    /// </summary>
+    /// <param name="shell"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    public void HitByShell(Shell shell)
+    {
+        throw new NotImplementedException();
+    }
 }
