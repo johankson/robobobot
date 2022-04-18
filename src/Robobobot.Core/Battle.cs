@@ -5,6 +5,7 @@ namespace Robobobot.Core;
 public class Battle
 {
     private readonly List<Player> players = new();
+    private readonly List<Shell> shells = new();
     private readonly IIdGenerator idGenerator = new IdGenerator();
     private readonly BattleRenderer renderer;
     private BattleField battleField = new(20, 20);
@@ -86,9 +87,14 @@ public class Battle
 
     private readonly List<ActionBase> nextFrameActions = new();
     private DateTime lastReceivedActionTimeStamp = DateTime.Now;
+    private DateTime lastUpdate = DateTime.Now;
 
     public async Task Update()
     {
+        // Calc the elapsed time for this battle, diff = from beginning of last update to the beginning of this one.
+        var elapsedGameTime = (float) (DateTime.Now - lastUpdate).TotalMilliseconds;
+        lastUpdate = DateTime.Now;
+        
         // Copy the actions in the buffer
         var frameActions = new List<ActionBase>();
         lock (nextFrameActions)
@@ -114,11 +120,20 @@ public class Battle
 
         // Execute the actions
         // Todo Sort by type (movement first, the aim and so on)
+        // The code to do stuff (like movement) is placed in the actual action.
+        // This is a design decision to keep it as simple as possible to add new
+        // actions to the game.
         foreach (var action in frameActions)
         {
             var result = await action.Execute(this);
             action.Result = result;
             action.CompleteCallback?.Invoke();
+        }
+
+        // Update the dangerous stuff flying around.
+        foreach (var shell in shells)
+        {
+            shell.Update(elapsedGameTime, this);
         }
     }
     
