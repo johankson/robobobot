@@ -95,6 +95,17 @@ public class Battle
         var elapsedGameTime = (float) (DateTime.Now - lastUpdate).TotalMilliseconds;
         lastUpdate = DateTime.Now;
         
+        // Update the dangerous stuff flying around.
+        lock (shells)
+        {
+            foreach (var shell in shells)
+            {
+                shell.Update(elapsedGameTime, this);
+            }
+
+            shells.RemoveAll(x => x.MarkForDeletion);
+        }
+        
         // Copy the actions in the buffer
         var frameActions = new List<ActionBase>();
         lock (nextFrameActions)
@@ -130,13 +141,7 @@ public class Battle
             action.CompleteCallback?.Invoke();
         }
 
-        // Update the dangerous stuff flying around.
-        foreach (var shell in shells)
-        {
-            shell.Update(elapsedGameTime, this);
-        }
-
-        shells.RemoveAll(x => x.MarkForDeletion);
+  
     }
     
     /// <summary>
@@ -147,4 +152,12 @@ public class Battle
 
     public Player? FindPlayerByToken(string playerToken) =>
         players.FirstOrDefault(player => player.Token == playerToken);
+    
+    public void AddShell(Shell shell)
+    {
+        lock (shell)
+        {
+            shells.Add(shell);
+        }
+    }
 }

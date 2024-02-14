@@ -18,7 +18,7 @@ public class RobobobotClient
     private const string GetReadingsUri = "/api/Battle/get-readings";
     private const string AimUri = "/api/Battle/aim";
     private const string MoveUri = "/api/Battle/move";
-    private const string FireUri = "/api/fire";
+    private const string FireUri = "/api/Battle/fire";
     private string playerToken = "";
     
     public RobobobotClient(string serverAddress)

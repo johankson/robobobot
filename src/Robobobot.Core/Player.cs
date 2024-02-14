@@ -49,6 +49,7 @@ public class Player
     private bool hasPendingAction;
     private readonly object pendingActionLock = new();
 
+    public PlayerState PlayerState = PlayerState.Alive;
 
     /// <summary>
     /// Called when this player gets hit by a shell.
@@ -57,6 +58,14 @@ public class Player
     /// <exception cref="NotImplementedException"></exception>
     public void HitByShell(Shell shell)
     {
-        throw new NotImplementedException();
+        PlayerState = PlayerState.Dead;
     }
+
+   
+}
+
+public enum PlayerState
+{
+    Alive = 0,
+    Dead = 1
 }
