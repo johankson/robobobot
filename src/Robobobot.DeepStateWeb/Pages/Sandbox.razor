@@ -90,7 +90,14 @@
 
     private async Task Fire()
     {
+        if (client is null)
+        {
+            SetStatus("The client is null, something is wrong...");
+            return;
+        }
         
+        SetStatus("Fire!");
+        var response = await client.Fire();
     }
 
     private async Task GetReadings()

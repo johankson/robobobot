@@ -101,7 +101,15 @@ public class BattleRenderer
     }
     private bool IsEnemyAtLocation(Location location, out char shortToken)
     {
-        shortToken = battle.Players.FirstOrDefault(p => p.Location == location)?.ShortToken ?? ' ';
+        var player = battle.Players.FirstOrDefault(p => p.Location == location);
+        if (player is null)
+        {
+            shortToken = ' ';
+        }
+        else
+        {
+            shortToken = player.PlayerState == PlayerState.Alive ? player.ShortToken : 'D';
+        }
         return shortToken != ' ';
     }
     

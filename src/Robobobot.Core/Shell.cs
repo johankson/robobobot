@@ -31,23 +31,23 @@ public class Shell
     {
         // move
         Location += Direction * Speed * elapsedGameTime;
+        
+        // Check range
+        var travelledDistance = (Location - startLocation).Length();
+        if (travelledDistance > battle.Settings.ShellRange)
+        {
+            // todo, the range should be read at creation perhaps and passed into the object.
+            MarkForDeletion = true;
+            return;
+        }
 
         // Check for collision (since we don't have any collision manager)
         foreach (var player in battle.Players)
         {
             // Don't shoot yourself
-            if (player != FiredBy)
+            if (player == FiredBy)
             {
                 continue;
-            }
-            
-            // Check range
-            var travelledDistance = (Location - startLocation).Length();
-            if (travelledDistance > battle.Settings.ShellRange)
-            {
-                // todo, the range should be read at creation perhaps and passed into the object.
-                MarkForDeletion = true;
-                return;
             }
             
             if (player.Location.Is(Location))

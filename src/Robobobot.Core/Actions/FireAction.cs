@@ -1,4 +1,6 @@
+using System.Numerics;
 using Robobobot.Core.Models;
+using Robobobot.Core.Utils;
 namespace Robobobot.Core.Actions;
 
 public class FireAction : ActionBase
@@ -16,6 +18,10 @@ public class FireAction : ActionBase
             Success = true,
             ExecutionDuration = battle.Settings.ExecutionDurations.FireInMilliseconds,
         };
+
+        var direction = Vector2.Transform(Vector2.UnitY, Matrix3x2.CreateRotation(-VectorUtil.DegreeToRadian(player.TankHeading + player.TurretDegree)));
+        var shell = new Shell(new Vector2(player.Location.X + 0.5f, player.Location.Y + 0.5f), player, direction);
+        battle.AddShell(shell);
 
         return Task.FromResult<ActionExecutionResult>(result);
     }
