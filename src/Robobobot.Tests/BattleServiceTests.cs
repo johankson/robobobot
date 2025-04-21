@@ -47,4 +47,15 @@ public class BattleServiceTests
         // Assert
         battle.Renderer.RenderBattleField().Should().BeEquivalentTo(new BattleFieldParser().Parse(level).map);
     }
+
+    [Fact]
+    public async Task ShouldListAllBattles()
+    {
+        var service = new BattleService();
+        service.CreateSandboxBattle("Battle 1");
+        service.CreateSandboxBattle("Battle 2");
+        
+        var battles = service.GetAllBattles();
+        battles.Should().HaveCount(2);
+    }
 }

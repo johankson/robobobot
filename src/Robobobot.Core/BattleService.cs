@@ -136,4 +136,13 @@ public class BattleService
             .Where(player => player.Token == playerToken), (b, p) => (b.Value, p)).FirstOrDefault();
         return result;
     }
+    
+    public IEnumerable<Battle> GetAllBattles(bool onlySandbox = false)
+    {
+        if (onlySandbox)
+        {
+            return activeBattles.Values.Where(x => x.Type == BattleType.Sandbox);
+        }
+        return activeBattles.Values;
+    }
 }
