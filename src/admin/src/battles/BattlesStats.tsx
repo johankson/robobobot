@@ -10,7 +10,7 @@ export const BattleStats = () => {
   const { data: battles } = useGetBattles();
 
   const numPlayers = battles?.reduce(
-    (acc, battle) => battle.players?.length ?? 0,
+    (_acc, battle) => battle.players?.length ?? 0,
     0
   );
 
