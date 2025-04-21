@@ -18,10 +18,47 @@ public class Battle
 
     public BattleField BattleField => battleField;
 
-    public void GenerateBattleField(int width, int height)
+    public void GenerateBattleField(string seed, int width, int height)
     {
-        // todo create a battlefield generator...
-        throw new NotImplementedException();
+        if (width < 10 || height < 10 || width > 1000 || height > 1000)
+        {
+            throw new InvalidMapSizeException("Width and height must be between 10 and 1000");
+        }
+
+        battleField = new BattleField(width, height);
+        
+        if (string.IsNullOrWhiteSpace(seed))
+        {
+            // Randomize the seed...
+            var random = new Random();
+            seed = $"{random.Next(0, 10000)}-{DateTime.Now.Ticks}";
+        }
+        
+        // Use a noise algorithm to generate the map
+        SimplexNoise.Noise.Seed = seed.GetHashCode();
+        var scale = 0.10f;
+        var noise = SimplexNoise.Noise.Calc2D(width, height, scale);
+        
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                var value = noise[x, y];
+                var cell = battleField.GetCell(x, y);
+
+                cell.Type = value switch
+                {
+                    < 50f => CellType.Swamp,
+                    < 100f => CellType.Land,
+                    < 140f => CellType.Forrest,
+                    < 400f => CellType.Mountain,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            }
+        }
+        
+        // For the time being, just add the default start positions along the edge of the map (8 of them)
+        battleField.AddDefaultStartLocations();
     }
 
     public void UsePredefinedBattleField(string preDefinedBattleField)

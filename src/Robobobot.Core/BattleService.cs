@@ -56,6 +56,8 @@ public class BattleService
             }
             else
             {
+                battle.GenerateBattleField(battleFieldOptions?.Seed ?? "", battleFieldOptions?.Width ?? 100, battleFieldOptions?.Height ?? 100);
+                
                 // For the time being, just add the default start positions along the edge of the map (8 of them)
                 battle.BattleField.AddDefaultStartLocations();
             }

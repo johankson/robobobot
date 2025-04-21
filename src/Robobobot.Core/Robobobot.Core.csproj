@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="shortid" Version="3.0.1" />
+      <PackageReference Include="SimplexNoise" Version="2.0.0" />
     </ItemGroup>
 
     <ItemGroup>
