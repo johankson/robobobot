@@ -1,14 +1,26 @@
-import { Box, List, ListItem, Typography } from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { Box, Button, List, ListItem, Stack, Typography } from "@mui/material";
+import { useState } from "react";
+import { useCreateSandboxBattle } from "../api/useCreateSandboxBattle";
 import { useGetBattles } from "../api/useGetBattles";
+import { BattleView } from "./BattleView";
 
 export const BattlesList = () => {
+  const [viewBattleId, setViewBattleId] = useState<string | null | undefined>();
   const { data: battles } = useGetBattles();
+  const { mutate: createBattle } = useCreateSandboxBattle();
 
   return (
     <Box>
       {battles && (
         <>
-          <Typography variant="h3">Active battles</Typography>
+          <Stack direction="row" gap="1rem" alignItems="center">
+            <Typography variant="h3">Active battles</Typography>
+            <Button onClick={() => createBattle()}>
+              <Add />
+              Create new
+            </Button>
+          </Stack>
           {battles.length === 0 && <Typography>No active battles</Typography>}
           {battles.length > 0 && (
             <List>
@@ -16,6 +28,9 @@ export const BattlesList = () => {
                 return (
                   <ListItem key={battle.battleToken}>
                     {battle.players?.[0].name}
+                    <Button onClick={() => setViewBattleId(battle.battleToken)}>
+                      View
+                    </Button>
                   </ListItem>
                 );
               })}
@@ -23,6 +38,7 @@ export const BattlesList = () => {
           )}
         </>
       )}
+      {viewBattleId && <BattleView battleId={viewBattleId} />}
     </Box>
   );
 };

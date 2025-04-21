@@ -12,6 +12,7 @@
 
 import {
   Battle,
+  BattleView,
   JoinRequest,
   JoinResponse,
   JoinSandboxRequest,
@@ -193,7 +194,7 @@ export class Api<
     },
     params: RequestParams = {},
   ) =>
-    this.request<string, any>({
+    this.request<BattleView, any>({
       path: `/api/Battle/view-battle`,
       method: "GET",
       query: query,

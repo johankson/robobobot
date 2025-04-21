@@ -28,7 +28,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("anythingGoesPolicy",
         policy =>
         {
+            policy.AllowAnyMethod();
             policy.AllowAnyOrigin();
+            policy.SetIsOriginAllowed(origin => true);
+            policy.AllowAnyHeader();
             //.WithExposedHeaders("x-player-token");
         });
 });

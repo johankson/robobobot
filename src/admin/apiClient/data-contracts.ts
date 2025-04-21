@@ -70,6 +70,15 @@ export interface BattleSettings {
   randomizeStartPositionAssignment?: boolean;
 }
 
+export interface BattleView {
+  battleField?: string | null;
+  /** @format int32 */
+  width?: number;
+  /** @format int32 */
+  height?: number;
+  players?: Player[] | null;
+}
+
 export interface ExecutionDurations {
   /** @format int32 */
   moveOverLandInMilliseconds?: number;
