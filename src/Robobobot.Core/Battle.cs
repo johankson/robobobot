@@ -48,9 +48,9 @@ public class Battle
 
                 cell.Type = value switch
                 {
-                    < 50f => CellType.Swamp,
-                    < 100f => CellType.Land,
-                    < 140f => CellType.Forrest,
+                    < 30f => CellType.Swamp,
+                    < 150f => CellType.Land,
+                    < 200f => CellType.Forrest,
                     < 400f => CellType.Mountain,
                     _ => throw new ArgumentOutOfRangeException()
                 };
