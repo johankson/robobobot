@@ -36,7 +36,7 @@ public class Battle
         
         // Use a noise algorithm to generate the map
         SimplexNoise.Noise.Seed = seed.GetHashCode();
-        var scale = 0.10f;
+        var scale = 0.04f;
         var noise = SimplexNoise.Noise.Calc2D(width, height, scale);
         
         for (var y = 0; y < height; y++)
@@ -50,7 +50,7 @@ public class Battle
                 {
                     < 30f => CellType.Swamp,
                     < 150f => CellType.Land,
-                    < 200f => CellType.Forrest,
+                    < 230f => CellType.Forrest,
                     < 400f => CellType.Mountain,
                     _ => throw new ArgumentOutOfRangeException()
                 };
