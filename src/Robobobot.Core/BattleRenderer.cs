@@ -108,7 +108,7 @@ public class BattleRenderer
     private bool IsCellVisibleForPlayer(Player player, int x, int y)
     {
         // Naive first implementation
-        var v1 = new Vector2(player.Location.X + 0.5f, player.Location.Y + 0.5f);
+        var v1 = new Vector2(player.Location.X + 0.5f, player.Location.Y + 0.5f); // + 0.5f to center the player
         var tx = x < player.Location.X ? 1f : 0f;
         var ty = y < player.Location.Y ? 1f : 0f;
 

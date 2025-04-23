@@ -1,10 +1,11 @@
 using Robobobot.Core.Actions;
 using Robobobot.Server.Services;
+
 namespace Robobobot.Core;
 
 public class Battle
 {
-    private readonly List<Player> players = new();
+    private readonly List<Player> players = [];
     private readonly IIdGenerator idGenerator = new IdGenerator();
     private readonly BattleRenderer renderer;
     private BattleField battleField = new(20, 20);
@@ -34,8 +35,13 @@ public class Battle
             seed = $"{random.Next(0, 10000)}-{DateTime.Now.Ticks}";
         }
         
+        // Create a numeric seed from the string
+        // DO NOT use seed.GetHashCode() since it will be different on different platforms
+        // and randomized by the run time between different executions of the server.
+        var hash = System.HashCode.Combine(seed);
+        
         // Use a noise algorithm to generate the map
-        SimplexNoise.Noise.Seed = seed.GetHashCode();
+        SimplexNoise.Noise.Seed = hash;
         var scale = 0.04f;
         var noise = SimplexNoise.Noise.Calc2D(width, height, scale);
         
@@ -59,6 +65,12 @@ public class Battle
         
         // For the time being, just add the default start positions along the edge of the map (8 of them)
         battleField.AddDefaultStartLocations();
+        
+        // BIG TODO:
+        // The start position should be randomized but also not put the player
+        // in a swamp or mountain, a cell that is not walkable or to close to another player.
+        // The start position must also be playable so we are not surrounded by unwalkable cells.
+        // And on top of that, it must be repeatable from the same seed.
     }
 
     public void UsePredefinedBattleField(string preDefinedBattleField)
@@ -163,7 +175,7 @@ public class Battle
     /// Signals that the battle is stale.
     /// </summary>
     /// <remarks>This marks that it should be removed from the server.</remarks>
-    public bool IsStale { get; set; }
+    public bool IsStale { get; private set; }
 
     public Player? FindPlayerByToken(string playerToken) =>
         players.FirstOrDefault(player => player.Token == playerToken);
