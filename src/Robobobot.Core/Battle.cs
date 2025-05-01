@@ -179,6 +179,9 @@ public class Battle
 
         // Execute the actions
         // Todo Sort by type (movement first, the aim and so on)
+        // The code to do stuff (like movement) is placed in the actual action.
+        // This is a design decision to keep it as simple as possible to add new
+        // actions to the game.
         foreach (var action in frameActions)
         {
             var result = await action.Execute(this);
