@@ -101,14 +101,22 @@ public class BattleRenderer
     }
     private bool IsEnemyAtLocation(Location location, out char shortToken)
     {
-        shortToken = battle.Players.FirstOrDefault(p => p.Location == location)?.ShortToken ?? ' ';
+        var player = battle.Players.FirstOrDefault(p => p.Location == location);
+        if (player is null)
+        {
+            shortToken = ' ';
+        }
+        else
+        {
+            shortToken = player.PlayerState == PlayerState.Alive ? player.ShortToken : 'D';
+        }
         return shortToken != ' ';
     }
     
     private bool IsCellVisibleForPlayer(Player player, int x, int y)
     {
         // Naive first implementation
-        var v1 = new Vector2(player.Location.X + 0.5f, player.Location.Y + 0.5f);
+        var v1 = new Vector2(player.Location.X + 0.5f, player.Location.Y + 0.5f); // + 0.5f to center the player
         var tx = x < player.Location.X ? 1f : 0f;
         var ty = y < player.Location.Y ? 1f : 0f;
 

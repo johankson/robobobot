@@ -56,6 +56,8 @@ public class BattleService
             }
             else
             {
+                battle.GenerateBattleField(battleFieldOptions?.Seed ?? "", battleFieldOptions?.Width ?? 100, battleFieldOptions?.Height ?? 100);
+                
                 // For the time being, just add the default start positions along the edge of the map (8 of them)
                 battle.BattleField.AddDefaultStartLocations();
             }
@@ -135,5 +137,14 @@ public class BattleService
         var result = activeBattles.SelectMany(battle => battle.Value.Players
             .Where(player => player.Token == playerToken), (b, p) => (b.Value, p)).FirstOrDefault();
         return result;
+    }
+    
+    public IEnumerable<Battle> GetAllBattles(bool onlySandbox = false)
+    {
+        if (onlySandbox)
+        {
+            return activeBattles.Values.Where(x => x.Type == BattleType.Sandbox);
+        }
+        return activeBattles.Values;
     }
 }

@@ -71,7 +71,7 @@ public class BattleController : ControllerBase
     
     [HttpGet]
     [Route("view-battle")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [Produces<BattleView>]
     public IActionResult ViewBattle(string battleId)
     {
         // this should be protected by a viewer ID so clients don't use this info
@@ -81,12 +81,12 @@ public class BattleController : ControllerBase
             return new NotFoundResult();
         }
 
-        var result = new
+        var result = new BattleView()
         {
             BattleField = new BattleRenderer(battle).RenderBattleField(renderPlayers: true),
-            battle.BattleField.Width,
-            battle.BattleField.Height,
-            battle.Players
+            Width = battle.BattleField.Width,
+            Height = battle.BattleField.Height,
+            Players = battle.Players.ToList(),
         };
         
         return new OkObjectResult(result);
@@ -104,6 +104,19 @@ public class BattleController : ControllerBase
     {
         return await ExecuteAction(new GetVisualAction(playerHeaders.Token), playerHeaders.Token);
     }
+    
+    /// <summary>
+    /// Fires the gun!
+    /// </summary>
+    /// <param name="playerHeaders">The headers.</param>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("fire")]
+    public async Task<IActionResult> Fire([FromQuery] PlayerHeaders playerHeaders)
+    {
+        return await ExecuteAction(new FireAction(playerHeaders.Token), playerHeaders.Token);
+    }
+
 
     [HttpGet]
     [Route("move/{direction}")]
@@ -184,4 +197,12 @@ public record PlayerHeaders
     [FromHeader]
     [Required]
     public string Token { get; set; } = string.Empty;
+}
+
+public class BattleView
+{
+    public string BattleField { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public List<Player> Players { get; set; }
 }

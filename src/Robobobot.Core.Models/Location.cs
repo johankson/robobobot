@@ -1,3 +1,4 @@
+using System.Numerics;
 namespace Robobobot.Core.Models;
 
 public record Location(int X, int Y)
@@ -23,6 +24,8 @@ public record Location(int X, int Y)
     }
     
     public bool Is(int x, int y) => X == x && Y == y;
+    
+    public bool Is(Vector2 location) => Is((int)location.X, (int)location.Y);
     
     public static Location Create(int x, int y) => new(x, y);
     

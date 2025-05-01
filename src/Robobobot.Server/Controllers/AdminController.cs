@@ -75,5 +75,15 @@ public class AdminController : ControllerBase
         battleService.GetPlayerByToken(playerToken)!.Location = Location.Create(x, y);
         return new OkResult();
     }
+
+    [HttpGet]
+    [Route("list-battles")]
+    [Produces<List<Battle>>]
+    public IActionResult ListBattles()
+    {
+        battleService.ServerLog.Log($"Listing all battles");
+        var battles = battleService.GetAllBattles();
+        return new OkObjectResult(battles);
+    }
 }
 
